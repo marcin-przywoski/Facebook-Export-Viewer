@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <StartupObject>ExportViewer.GUI.App</StartupObject>
+		<RepositoryUrl>https://github.com/marcin-przywoski/Facebook-Export-Viewer</RepositoryUrl>
+		<RepositoryType>public</RepositoryType>
   </PropertyGroup>
 
 </Project>
