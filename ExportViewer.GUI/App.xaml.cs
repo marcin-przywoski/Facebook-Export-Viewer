@@ -23,11 +23,9 @@ namespace ExportViewer.GUI
             serviceProvider = services.BuildServiceProvider();
         }
 
-
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<MainWindow>();
-            
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
