@@ -24,5 +24,20 @@ namespace ExportViewer.GUI
         {
             InitializeComponent();
         }
+
+        private void StartButton_Click (object sender , RoutedEventArgs e)
+        {
+
+        }
+
+        private void DestinationLocation_Click (object sender , RoutedEventArgs e)
+        {
+
+        }
+
+        private void SourceLocation_Click (object sender , RoutedEventArgs e)
+        {
+
+        }
     }
 }
