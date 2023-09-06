@@ -6,9 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AngleSharp.Html.Parser;
+using AngleSharp.XPath;
 using ExportViewer.Core.Enums;
 using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Services.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace ExportViewer.Core.Services
 {
