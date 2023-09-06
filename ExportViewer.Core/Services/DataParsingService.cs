@@ -19,14 +19,59 @@ namespace ExportViewer.Core.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<string>> GetExportFiles (string exportLocation , ExportType type , IProgress<string> progress)
+
+        public async Task<CultureInfo> GetExportLanguage(string exportLocation, ExportType exportType, IProgress<string> progress)
         {
-            throw new NotImplementedException();
+            string preferencesLocation;
+            string locale;
+
+            var parser = new HtmlParser();
+
+            if (exportType == ExportType.HTML)
+            {
+                preferencesLocation = Path.Combine(exportLocation, "about_you/preferences.html");
+                if (File.Exists(preferencesLocation))
+                {
+                    string preferences = await File.ReadAllTextAsync(preferencesLocation);
+                    var document = parser.ParseDocument(preferences);
+                    locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]")?.TextContent?.Trim();
+                    if (locale != null)
+        {
+                        progress.Report($"Export language: {locale}");
+                        return new CultureInfo(locale, false);
+                    }
         }
 
-        public Task<CultureInfo> GetExportLanguage (string exportLocation , ExportType type , IProgress<string> progress)
+                preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.html");
+                if (File.Exists(preferencesLocation))
+                {
+                    string preferences = await File.ReadAllTextAsync(preferencesLocation);
+                    var document = parser.ParseDocument(preferences);
+                    locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]")?.TextContent?.Trim();
+                    if (locale != null)
+                    {
+                        progress.Report($"Export language: {locale}");
+                        return new CultureInfo(locale, false);
+                    }
+                }
+            }
+            else if (exportType == ExportType.Json)
+            {
+                preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.json");
+                if (File.Exists(preferencesLocation))
+                {
+                    string json = await File.ReadAllTextAsync(preferencesLocation);
+                    JObject jsonObj = JObject.Parse(json);
+                    locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value");
+                    if (locale != null)
         {
-            throw new NotImplementedException();
+                        progress.Report($"Export language: {locale}");
+                        return new CultureInfo(locale, false);
+                    }
+                }
+            }
+
+            return null;
         }
 
 
