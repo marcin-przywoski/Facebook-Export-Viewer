@@ -15,8 +15,41 @@ namespace ExportViewer.Core.Services
     public class DataParsingService : IDataParsingService
     {
         public Task<IEnumerable<IMessage>> GetExportFileMessages (string exportLocation , string exportFileLocation , ExportType type , CultureInfo locale , IProgress<string> progress)
+        public Task<IEnumerable<string>> GetExportFiles(string exportLocation, ExportType type, IProgress<string> progress)
         {
-            throw new NotImplementedException();
+            var fileExtensions = new Dictionary<ExportType, string>
+            {
+                { ExportType.HTML, "*.html" },
+                { ExportType.Json, "*.json" }
+            };
+
+            var exportFiles = new List<string>();
+
+            foreach (var subDirectory in new[] { "archived_threads/", "filtered_threads/", "inbox/" })
+            {
+                var subDirectoryLocation = Path.Combine(exportLocation, "messages/", subDirectory);
+                var fileExtension = fileExtensions[type];
+
+                if (Directory.Exists(subDirectoryLocation))
+                {
+                    try
+                    {
+                exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation, fileExtension, SearchOption.AllDirectories));
+            }
+                    catch (Exception ex)
+                    {
+                        // Handle the exception or log the error
+                        Console.WriteLine($"Error getting files from {subDirectoryLocation}: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    // Handle the case when the directory does not exist
+                    Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
+                }
+            }
+
+            return Task.FromResult<IEnumerable<string>>(exportFiles);
         }
 
 
