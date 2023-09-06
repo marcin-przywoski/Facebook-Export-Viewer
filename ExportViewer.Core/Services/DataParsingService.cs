@@ -17,7 +17,26 @@ namespace ExportViewer.Core.Services
 {
     public class DataParsingService : IDataParsingService
     {
-        public Task<IEnumerable<IMessage>> GetExportFileMessages (string exportLocation , string exportFileLocation , ExportType type , CultureInfo locale , IProgress<string> progress)
+        public async Task<IEnumerable<IMessage>> GetExportFileMessages(string exportLocation, string exportFileLocation, ExportType type, CultureInfo locale, IProgress<string> progress)
+        {
+            progress.Report($"Processing {exportFileLocation}");
+
+            if (type == ExportType.HTML)
+            {
+                var parsingService = new HtmlParsingService();
+
+                return await parsingService.GetMessages(exportFileLocation, locale, exportLocation);
+        }
+            else if (type == ExportType.Json)
+            {
+                var parsingService = new JsonParsingService();
+
+                return await parsingService.GetMessages(exportFileLocation, locale, exportLocation);
+            }
+            return Enumerable.Empty<IMessage>();
+
+        }
+
         public Task<IEnumerable<string>> GetExportFiles(string exportLocation, ExportType type, IProgress<string> progress)
         {
             var fileExtensions = new Dictionary<ExportType, string>
@@ -72,11 +91,11 @@ namespace ExportViewer.Core.Services
                     var document = parser.ParseDocument(preferences);
                     locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]")?.TextContent?.Trim();
                     if (locale != null)
-        {
+                    {
                         progress.Report($"Export language: {locale}");
                         return new CultureInfo(locale, false);
                     }
-        }
+                }
 
                 preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.html");
                 if (File.Exists(preferencesLocation))
@@ -100,7 +119,7 @@ namespace ExportViewer.Core.Services
                     JObject jsonObj = JObject.Parse(json);
                     locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value");
                     if (locale != null)
-        {
+                    {
                         progress.Report($"Export language: {locale}");
                         return new CultureInfo(locale, false);
                     }
@@ -131,7 +150,7 @@ namespace ExportViewer.Core.Services
                 return Task.FromResult(ExportType.HTML);
             }
             else
-        {
+            {
                 progress.Report($"Export type: HTML");
                 return Task.FromResult(ExportType.NotApplicable);
             }
