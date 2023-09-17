@@ -56,20 +56,22 @@ namespace ExportViewer.Core.Services
             {
                 divs = document.QuerySelectorAll("div._3-95._a6-g");
 
-                if (locale.DisplayName == "pl_PL") {
+                if (locale.DisplayName == "pl_PL")
+                {
                     locale.DateTimeFormat.PMDesignator = "po południu";
                     locale.DateTimeFormat.AMDesignator = "rano";
                 }
 
-                Parallel.ForEach(divs , node => {
+                Parallel.ForEach(divs , node =>
+                {
 
                     var divImage = node.QuerySelector("img._a6_o._3-96");
+                    var divVideo = node.QuerySelector("video._a6_o._3-96");
                     var divDate = node.QuerySelector("div._3-94._a6-o")?.QuerySelector("div._a72d");
 
-                    if (divImage != null && divDate != null && !string.IsNullOrEmpty(divDate.TextContent))
+                    if (((divImage != null && divDate != null) || (divVideo != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
                     {
-
-                        string href = divImage.GetAttribute("src");
+                        string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
                         if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
 
