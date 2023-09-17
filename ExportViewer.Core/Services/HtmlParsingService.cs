@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -18,38 +19,75 @@ namespace ExportViewer.Core.Services
 {
     public class HtmlParsingService : IHtmlParsingService
     {
-        public async Task<IEnumerable<IMessage>> GetMessages(string filePath, CultureInfo locale, string exportLocation)
+        public async Task<IEnumerable<IMessage>> GetMessages (string filePath , CultureInfo locale , string exportLocation)
         {
             ConcurrentBag<Message> messages = new ConcurrentBag<Message>();
 
             string source = await File.ReadAllTextAsync(filePath);
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(source);
-            //var divs = document.Body.SelectNodes("//div[@class='pam _3-95 _2pi0 _2lej uiBoxWhite noborder']");
-            var anotherDivs = document.QuerySelectorAll("div.pam._3-95._2pi0._2lej.uiBoxWhite.noborder");
+            var divs = document.QuerySelectorAll("div.pam._3-95._2pi0._2lej.uiBoxWhite.noborder");
 
-            //document.Dispose();
-
-            Parallel.ForEach(anotherDivs, node => 
+            if (divs.Any())
             {
-                if ((node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent != "") && node.Descendents().OfType<IHtmlAnchorElement>().Any() && (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href") != "")
+                Parallel.ForEach(divs , node =>
                 {
-                    string href = (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href");
-
-                    if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
+                    if ((node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent != "") && node.Descendents().OfType<IHtmlAnchorElement>().Any() && (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href") != "")
                     {
-                        string divDate = node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent;
+                        string href = (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href");
 
-                        DateTime date = Convert.ToDateTime(divDate, locale);
-
-                        if (File.Exists(exportLocation + href))
+                        if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
-                            messages.Add(new Message { Link = href, Date = date });
+                            string divDate = node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent;
+
+                            DateTime date = Convert.ToDateTime(divDate , locale);
+
+                            if (File.Exists(exportLocation + href))
+                            {
+                                messages.Add(new Message { Link = href , Date = date });
+                            }
+                        }
+
+                    }
+                });
+
+            }
+            else
+            {
+                divs = document.QuerySelectorAll("div._3-95._a6-g");
+
+                if (locale.DisplayName == "pl_PL") {
+                    locale.DateTimeFormat.PMDesignator = "po południu";
+                    locale.DateTimeFormat.AMDesignator = "rano";
+                }
+
+                Parallel.ForEach(divs , node => {
+
+                    var divImage = node.QuerySelector("img._a6_o._3-96");
+                    var divDate = node.QuerySelector("div._3-94._a6-o")?.QuerySelector("div._a72d");
+
+                    if (divImage != null && divDate != null && !string.IsNullOrEmpty(divDate.TextContent))
+                    {
+
+                        string href = divImage.GetAttribute("src");
+                        if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
+                        {
+
+                            locale.DateTimeFormat.PMDesignator = "po południu";
+                            locale.DateTimeFormat.AMDesignator = "rano";
+
+                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
+
+                            if (File.Exists(exportLocation + href))
+                            {
+                                messages.Add(new Message { Link = href , Date = parsedDate });
+                            }
                         }
                     }
 
-                }
-            });
+                });
+
+            }
 
             return messages.AsEnumerable();
 
