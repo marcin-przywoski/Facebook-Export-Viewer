@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using ExportViewer.Core.Services;
+using ExportViewer.Core.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExportViewer.GUI
@@ -23,9 +25,15 @@ namespace ExportViewer.GUI
             serviceProvider = services.BuildServiceProvider();
         }
 
+
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<MainWindow>();
+            services.AddSingleton<IHtmlParsingService, HtmlParsingService>();
+            services.AddSingleton<IJsonParsingService, JsonParsingService>();
+            services.AddSingleton<IDataParsingService, DataParsingService>();
+            services.AddSingleton<IDateEmbeddingService, DateEmbeddingService>();
+
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
