@@ -8,6 +8,7 @@
 		<RepositoryUrl>https://github.com/marcin-przywoski/Facebook-Export-Viewer</RepositoryUrl>
 		<RepositoryType>public</RepositoryType>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
