@@ -9,7 +9,7 @@ using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Models.JSON;
 using ExportViewer.Core.Services.Interfaces;
 using Microsoft.VisualBasic;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ExportViewer.Core.Services
 {
@@ -17,7 +17,7 @@ namespace ExportViewer.Core.Services
     {
         public async Task<IEnumerable<IMessage>> GetMessages(string filePath, CultureInfo locale, string exportLocation)
         {
-            var conversation = JsonConvert.DeserializeObject<Conversation>(await File.ReadAllTextAsync(filePath));
+            var conversation = JsonSerializer.Deserialize<Conversation>(await File.ReadAllTextAsync(filePath));
 
             conversation.Messages.RemoveAll(s => s.Photos is null && s.Gifs is null && s.Videos is null);
 
