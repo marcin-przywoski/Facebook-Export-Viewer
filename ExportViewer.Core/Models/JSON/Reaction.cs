@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace ExportViewer.Core.Models.JSON
 {
     public class Reaction
     {
-        [JsonProperty(PropertyName = "reaction")]
+        [JsonPropertyName("reaction")]
         public string ReactionType { get; set; }
 
-        [JsonProperty(PropertyName = "actor")]
+        [JsonPropertyName("actor")]
         public string Actor { get; set; }
     }
 }

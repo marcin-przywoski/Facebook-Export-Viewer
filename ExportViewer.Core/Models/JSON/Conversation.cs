@@ -1,51 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
-using static System.Collections.Specialized.BitVector32;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ExportViewer.Core.Models.JSON
 {
-    [JsonObject("Root")]
+
     public class Conversation
     {
-        [JsonProperty(PropertyName = "participants")]
+        [JsonPropertyName("participants")]
         public List<Participant> Participants { get; set; }
 
-        [JsonProperty(PropertyName = "messages")]
+        [JsonPropertyName("messages")]
         public List<Message> Messages { get; set; }
 
-        [JsonProperty(PropertyName = "title")]
+        [JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [JsonProperty(PropertyName = "is_still_participant")]
+        [JsonPropertyName("is_still_participant")]
         public bool IsStillParticipant { get; set; }
 
-        [JsonProperty(PropertyName = "thread_type")]
+        [JsonPropertyName("thread_type")]
         public string ThreadType { get; set; }
 
-        [JsonProperty(PropertyName = "thread_path")]
+        [JsonPropertyName("thread_path")]
         public string ThreadPath { get; set; }
 
-        [JsonProperty(PropertyName = "magic_words")]
+        [JsonPropertyName("magic_words")]
         public List<object> MagicWords { get; set; }
 
     }
 
-    public class MilisecondEpochConverter : DateTimeConverterBase
+    public class MilisecondEpochConverter : JsonConverter<DateTime>
     {
-        private static readonly DateTime _epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local);
+        private static readonly DateTime _epoch = new DateTime(1970 , 1 , 1 , 0 , 0 , 0 , DateTimeKind.Local);
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteRawValue(((DateTime)value - _epoch).TotalMilliseconds + "");
-        }
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+    {
+        long milliseconds = (long)(value - _epoch).TotalMilliseconds;
+        writer.WriteNumberValue(milliseconds);
+    }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override DateTime Read (ref Utf8JsonReader reader , Type typeToConvert , JsonSerializerOptions options)
         {
-            if (reader.Value == null) { return null; }
-            return _epoch.AddMilliseconds((long)reader.Value / 1d);
+            if (reader.TokenType != JsonTokenType.Number)
+            {
+                throw new JsonException($"Unexpected token type: {reader.TokenType}");
+            }
+
+            long milliseconds = reader.GetInt64();
+            return _epoch.AddMilliseconds(milliseconds);
         }
     }
 }
