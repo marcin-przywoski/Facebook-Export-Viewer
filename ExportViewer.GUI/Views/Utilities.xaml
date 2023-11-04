@@ -1,0 +1,167 @@
+﻿<UserControl
+    x:Class="ExportViewer.GUI.Views.Utilities"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ExportViewer.GUI.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
+    Style="{DynamicResource MaterialDesignRoot}"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
+    <Grid>
+        <DockPanel />
+        <materialDesign:Card>
+            <TabControl
+                materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
+                SnapsToDevicePixels="True"
+                Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+                TabStripPlacement="Left">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="Folder" />
+                            <TextBlock HorizontalAlignment="Center" Text="All Files" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <StackPanel Margin="16">
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                            Text="All Files" />
+                        <TextBlock>
+                            <Run Text="tab 1 content. Default look and behaviors." />
+                            <LineBreak />
+                            <LineBreak />
+                            <Run FontStyle="Italic">
+                                Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+                            </Run>
+                        </TextBlock>
+                    </StackPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="ClockOutline" />
+                            <TextBlock HorizontalAlignment="Center" Text="Recent" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <StackPanel Margin="16">
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                            Text="Recent" />
+                        <TextBlock>
+                            <Run Text="tab 2 content. Default look and behaviors." />
+                            <LineBreak />
+                            <LineBreak />
+                            <Run FontStyle="Italic">
+                                Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+                            </Run>
+                        </TextBlock>
+                    </StackPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="Images" />
+                            <TextBlock HorizontalAlignment="Center" Text="Utilities" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <StackPanel Margin="16">
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                            Text="Metadata fix" />
+                        <TextBox
+                            x:Name="NameTextBox"
+                            materialDesign:HintAssist.HelperText="Source location of the Facebook export"
+                            materialDesign:HintAssist.Hint="Source">
+                            <TextBox.Text>
+                                <Binding Path="Name" UpdateSourceTrigger="PropertyChanged" />
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBox
+                            x:Name="NameTextBox2"
+                            Margin="0,23,0,0"
+                            materialDesign:HintAssist.HelperText="Destination of the media with fixed metadata"
+                            materialDesign:HintAssist.Hint="Destination">
+                            <TextBox.Text>
+                                <Binding Path="Name" UpdateSourceTrigger="PropertyChanged" />
+                            </TextBox.Text>
+                        </TextBox>
+                        <Button
+                            Margin="0,28,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Content="START"
+                            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            ToolTip="Resource name: MaterialDesignRaisedLightDarkButton" />
+                        <TextBox
+                            x:Name="OutputLog"
+                            Grid.Row="4"
+                            Grid.RowSpan="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="7"
+                            Height="200"
+                            Margin="0,17,0,0"
+                            materialDesign:HintAssist.Hint="Output from backend"
+                            FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"
+                            IsReadOnly="True"
+                            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                            Text=" "
+                            TextWrapping="NoWrap" />
+                    </StackPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="auto" Height="auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="Gear" />
+                            <TextBlock HorizontalAlignment="Center" Text="Settings" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <StackPanel Margin="16">
+                        <TextBlock
+                            Margin="0,0,0,8"
+                            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                            Text="Sounds" />
+                        <TextBlock>
+                            <Run Text="tab 4 content. Default look and behaviors." />
+                            <LineBreak />
+                            <LineBreak />
+                            <Run FontStyle="Italic">
+                                Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur,
+                                adipisci velit...
+                            </Run>
+                        </TextBlock>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>
