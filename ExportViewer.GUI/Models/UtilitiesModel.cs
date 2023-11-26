@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ExportViewer.GUI.Models
 {
-   public class Utilities : ObservableObject
+   public class UtilitiesModel : ObservableObject
     {
         public string SourcePath { get; set; }
 
