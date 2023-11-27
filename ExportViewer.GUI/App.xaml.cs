@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using ExportViewer.Core.Services;
 using ExportViewer.Core.Services.Interfaces;
+using ExportViewer.GUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExportViewer.GUI
@@ -16,7 +17,7 @@ namespace ExportViewer.GUI
     /// </summary>
     public partial class App : Application
     {
-        private ServiceProvider serviceProvider;
+        public ServiceProvider serviceProvider;
 
         public App()
         {
@@ -25,6 +26,7 @@ namespace ExportViewer.GUI
             serviceProvider = services.BuildServiceProvider();
         }
 
+        public new static App Current => (App)Application.Current;
 
         private void ConfigureServices(ServiceCollection services)
         {
@@ -33,6 +35,7 @@ namespace ExportViewer.GUI
             services.AddSingleton<IJsonParsingService, JsonParsingService>();
             services.AddSingleton<IDataParsingService, DataParsingService>();
             services.AddSingleton<IDateEmbeddingService, DateEmbeddingService>();
+            services.AddSingleton<Utilities>();
 
         }
         private void OnStartup(object sender, StartupEventArgs e)

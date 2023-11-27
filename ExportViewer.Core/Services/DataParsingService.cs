@@ -11,7 +11,7 @@ using AngleSharp.XPath;
 using ExportViewer.Core.Enums;
 using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Services.Interfaces;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace ExportViewer.Core.Services
 {
@@ -116,8 +116,10 @@ namespace ExportViewer.Core.Services
                 if (File.Exists(preferencesLocation))
                 {
                     string json = await File.ReadAllTextAsync(preferencesLocation);
-                    JObject jsonObj = JObject.Parse(json);
-                    locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value");
+                    JsonDocument jsonDocument = JsonDocument.Parse(json);
+                    locale = jsonDocument.RootElement.GetProperty("language_and_locale_v2[0].children[0].entries[0].data.value").GetString();
+/*                     JObject jsonObj = JObject.Parse(json);
+                    locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value"); */
                     if (locale != null)
                     {
                         progress.Report($"Export language: {locale}");
