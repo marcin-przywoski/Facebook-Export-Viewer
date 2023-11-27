@@ -1,12 +1,16 @@
+using System;
+using System.Threading.Tasks;
+
 namespace ExportViewer.GUI.Interfaces
 {
     public interface IUtilities
     {
-        public void SelectDestination (object sender , System.EventArgs e);
+        public Task ReportError(string message);
 
-        public void SelectSource (object sender , System.EventArgs e);
+        public Task ReportMessage(string message);
 
-        public void Start (object sender , System.EventArgs e);
+        public IProgress<string> GetProgressObject();
 
+        public Task SaveLog (string path);
     }
 }
