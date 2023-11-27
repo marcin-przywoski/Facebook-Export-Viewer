@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using ExportViewer.Core.Services;
 using ExportViewer.Core.Services.Interfaces;
+using ExportViewer.GUI.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExportViewer.GUI
@@ -33,6 +34,7 @@ namespace ExportViewer.GUI
             services.AddSingleton<IJsonParsingService, JsonParsingService>();
             services.AddSingleton<IDataParsingService, DataParsingService>();
             services.AddSingleton<IDateEmbeddingService, DateEmbeddingService>();
+            services.AddSingleton<Utilities>();
 
         }
         private void OnStartup(object sender, StartupEventArgs e)
