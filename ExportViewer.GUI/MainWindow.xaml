@@ -12,6 +12,7 @@
     Height="550"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
+    ResizeMode="CanMinimize"
     Style="{DynamicResource MaterialDesignRoot}"
     TextElement.FontSize="13"
     TextElement.FontWeight="Regular"
