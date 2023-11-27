@@ -7,8 +7,8 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:ExportViewer.GUI.ViewModels"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="500"
+    d:DesignWidth="600"
     Background="{DynamicResource MaterialDesignPaper}"
     mc:Ignorable="d">
 
@@ -83,6 +83,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="14"
             Height="200"
+            Padding="17,16,16,16"
             Panel.ZIndex="-1"
             materialDesign:HintAssist.Hint="Output from backend"
             FontFamily="pack://application:,,,/Resources/RobotoMono/#Roboto Mono"

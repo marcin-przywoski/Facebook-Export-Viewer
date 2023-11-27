@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:ExportViewer.GUI.Views"
     Title="Export Viewer"
     Width="800"
-    Height="550"
+    Height="600"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{DynamicResource MaterialDesignFont}"
     ResizeMode="CanMinimize"
@@ -73,7 +73,7 @@
                         </StackPanel>
                     </TabItem.Header>
 
-                    <views:Utilities Margin="16,16,16,16" />
+                    <views:Utilities Margin="16,10,16,10" />
 
                 </TabItem>
                 <TabItem>
