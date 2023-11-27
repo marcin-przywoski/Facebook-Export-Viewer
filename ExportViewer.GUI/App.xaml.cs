@@ -17,7 +17,7 @@ namespace ExportViewer.GUI
     /// </summary>
     public partial class App : Application
     {
-        private ServiceProvider serviceProvider;
+        public static ServiceProvider serviceProvider;
 
         public App()
         {
