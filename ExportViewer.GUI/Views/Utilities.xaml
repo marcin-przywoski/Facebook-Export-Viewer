@@ -58,27 +58,20 @@
             Margin="0,23,0,0"
             materialDesign:HintAssist.HelperText="Source location of the Facebook export"
             materialDesign:HintAssist.Hint="Source"
-            Text="{Binding Path=_utilitiesModel.SourcePath}">
-            <!--<TextBox.Text>
-                <Binding Path="{Binding Utilities.SourcePath}" UpdateSourceTrigger="PropertyChanged" />
-            </TextBox.Text>-->
-        </TextBox>
+            Text="{Binding Path=_utilitiesModel.SourcePath}" />
         <TextBox
             x:Name="DestinationLocation"
             Grid.Row="2"
             Grid.ColumnSpan="14"
             Margin="0,23,0,0"
             materialDesign:HintAssist.HelperText="Destination of the media with fixed metadata"
-            materialDesign:HintAssist.Hint="Destination">
-            <TextBox.Text>
-                <Binding Path="Name" UpdateSourceTrigger="PropertyChanged" />
-            </TextBox.Text>
-        </TextBox>
+            materialDesign:HintAssist.Hint="Destination"
+            Text="{Binding Path=_utilitiesModel.DestinationPath}" />
         <Button
             Grid.Row="4"
             Grid.Column="6"
             Grid.ColumnSpan="2"
-            Command="{Binding ShowSourceLocationCommand}"
+            Command="{Binding StartCommand}"
             Content="START"
             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
             Style="{StaticResource MaterialDesignRaisedDarkButton}"
