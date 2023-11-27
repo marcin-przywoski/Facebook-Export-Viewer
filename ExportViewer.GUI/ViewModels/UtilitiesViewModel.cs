@@ -26,17 +26,17 @@ namespace ExportViewer.GUI.ViewModels
 
 
 
-        public UtilitiesViewModel()
+        public UtilitiesViewModel ()
         {
 
         }
 
         public IUtilities Utilities { get; set; }
 
-        public UtilitiesModel _utilitiesModel { get; set; } = new UtilitiesModel ();
+        public UtilitiesModel _utilitiesModel { get; set; } = new UtilitiesModel();
 
         [RelayCommand]
-       async void OnStart()
+        async void OnStart ()
         {
             if (String.IsNullOrEmpty(_utilitiesModel.SourcePath) || String.IsNullOrEmpty(_utilitiesModel.DestinationPath))
             {
@@ -46,30 +46,35 @@ namespace ExportViewer.GUI.ViewModels
             {
                 var progress = Utilities.GetProgressObject();
 
-                        Stopwatch stopwatch = new Stopwatch();
-                        stopwatch.Start();
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
 
+                var sourceFolderPath = Path.Combine(_utilitiesModel.SourcePath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar);
+                var destinationFolderPath = Path.Combine(_utilitiesModel.DestinationPath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar);
 
+                var exportType = await dataParsingService.GetExportType(sourceFolderPath , progress);
 
-                        var exportType = await dataParsingService.GetExportType(_utilitiesModel.SourcePath, progress);
+                var exportLanguage = await dataParsingService.GetExportLanguage(destinationFolderPath , exportType , progress);
 
-                        var exportLanguage = await dataParsingService.GetExportLanguage(_utilitiesModel.DestinationPath , exportType, progress);
+                var exportFiles = await dataParsingService.GetExportFiles(sourceFolderPath , exportType , progress);
 
-                        var exportFiles = await dataParsingService.GetExportFiles(_utilitiesModel.SourcePath , exportType, progress);
-
-                        var messages = new List<IMessage>();
+                var messages = new List<IMessage>();
 
                 foreach (var file in exportFiles)
                 {
-                    messages.AddRange(await Task.Run(() => dataParsingService.GetExportFileMessages(_utilitiesModel.SourcePath , file , exportType , exportLanguage , progress)));
+                    messages.AddRange(await Task.Run(() => dataParsingService.GetExportFileMessages(sourceFolderPath , file , exportType , exportLanguage , progress)));
                 }
 
-                await Task.WhenAll(messages.Select(x => Task.Run(() => dateEmbeddingService.EmbeddDate(x , _utilitiesModel.SourcePath , _utilitiesModel.DestinationPath , progress))));
+                await Task.WhenAll(messages.Select(x => Task.Run(() => dateEmbeddingService.EmbeddDate(x , sourceFolderPath , destinationFolderPath , progress))));
 
                 stopwatch.Stop();
-                progress.Report($"Time elapsed total: {stopwatch.Elapsed:g}." + "\n" + $"Log saved to {_utilitiesModel.DestinationPath} log.txt");
-               await Utilities.SaveLog(_utilitiesModel.DestinationPath + "log.txt");
+
+                var logPath = Path.Combine(destinationFolderPath , "log.txt");
+
+                progress.Report($"Time elapsed total: {stopwatch.Elapsed:g}." + "\n" + $"Log saved to {logPath}");
+                await Utilities.SaveLog(logPath);
             }
         }
     }
 }
+
