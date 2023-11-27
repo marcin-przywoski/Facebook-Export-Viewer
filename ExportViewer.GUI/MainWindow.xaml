@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:ExportViewer.GUI"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:ExportViewer.GUI.Views"
     Title="Export Viewer"
     Width="1024"
     Height="623"
