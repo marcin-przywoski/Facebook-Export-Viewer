@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -21,6 +23,8 @@ namespace ExportViewer.GUI.Views
     /// </summary>
     public partial class Utilities : UserControl, IUtilities
     {
+        private Progress<string> _progress;
+
         public Utilities ()
         {
             InitializeComponent();
@@ -30,44 +34,32 @@ namespace ExportViewer.GUI.Views
             if (utilitiesViewModel != null)
                 utilitiesViewModel.Utilities = this;
 
+            _progress = new Progress<string>(x => { OutputLog.AppendText(x + "\n"); OutputLog.ScrollToEnd(); });
+
         }
 
-        public void SelectDestination()
-        {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
 
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok && dialog.FileName != null)
+        public Task ReportError (string message)
             {
-                DestinationLocation.Text = dialog.FileName + "/";
-
+            MessageBox.Show(message, "Alert" , MessageBoxButton.OK, MessageBoxImage.Error);
+            return Task.CompletedTask;
             }
-        }
 
-        public void SelectSource()
+        public Task ReportMessage (string message)
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.IsFolderPicker = true;
-
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok && dialog.FileName != null)
-            {
-                SourceLocation.Text = dialog.FileName + "/";
+            MessageBox.Show(message);
+            return Task.CompletedTask;
             }
+
+
+        public async Task SaveLog (string path)
+        {
+            await File.WriteAllTextAsync(path , OutputLog.Text);
         }
 
-        public void ShowSourceLocation(string sourceLocation)
+       public IProgress<string> GetProgressObject ()
         {
-            MessageBox.Show($"Source location is: {sourceLocation}");
-        }
-
-        public void Start()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void StartButton_Click (object sender , RoutedEventArgs e)
-        {
-
+            return _progress;
         }
     }
 }
