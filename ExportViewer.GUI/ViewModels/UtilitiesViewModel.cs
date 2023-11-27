@@ -19,10 +19,10 @@ namespace ExportViewer.GUI.ViewModels
 {
     public partial class UtilitiesViewModel
     {
-        private readonly IHtmlParsingService htmlParsingService = App.serviceProvider.GetRequiredService<IHtmlParsingService>();
-        private readonly IJsonParsingService jsonParsingService = App.serviceProvider.GetRequiredService<IJsonParsingService>();
-        private readonly IDataParsingService dataParsingService = App.serviceProvider.GetRequiredService<IDataParsingService>();
-        private readonly IDateEmbeddingService dateEmbeddingService = App.serviceProvider.GetRequiredService<IDateEmbeddingService>();
+        private readonly IHtmlParsingService htmlParsingService = App.Current.serviceProvider.GetRequiredService<IHtmlParsingService>();
+        private readonly IJsonParsingService jsonParsingService = App.Current.serviceProvider.GetRequiredService<IJsonParsingService>();
+        private readonly IDataParsingService dataParsingService = App.Current.serviceProvider.GetRequiredService<IDataParsingService>();
+        private readonly IDateEmbeddingService dateEmbeddingService = App.Current.serviceProvider.GetRequiredService<IDateEmbeddingService>();
 
 
 

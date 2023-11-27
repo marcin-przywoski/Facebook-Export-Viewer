@@ -17,7 +17,7 @@ namespace ExportViewer.GUI
     /// </summary>
     public partial class App : Application
     {
-        public static ServiceProvider serviceProvider;
+        public ServiceProvider serviceProvider;
 
         public App()
         {
@@ -26,6 +26,7 @@ namespace ExportViewer.GUI
             serviceProvider = services.BuildServiceProvider();
         }
 
+        public new static App Current => (App)Application.Current;
 
         private void ConfigureServices(ServiceCollection services)
         {
