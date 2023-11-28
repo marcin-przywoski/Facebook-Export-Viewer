@@ -45,4 +45,3 @@ I've added pre-compiled self contained packages if you don't have .NET core runt
 
 - [AngleSharp](https://github.com/AngleSharp/AngleSharp)
 - [AngleSharp.XPath](https://github.com/AngleSharp/AngleSharp.XPath)
-- [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
