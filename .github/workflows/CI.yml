@@ -8,6 +8,7 @@ on:
       - 'feature/**'
     paths:
       - '**.cs'
+      - '**.csproj'
   pull_request:
     branches:
       - 'master'
@@ -15,6 +16,7 @@ on:
       - 'feature/**'
     paths:
       - '**.cs'
+      - '**.csproj'
 
 jobs:
   build:
