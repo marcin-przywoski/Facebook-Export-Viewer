@@ -13,7 +13,7 @@ namespace ExportViewer.Core.Models.JSON
         public List<Participant> Participants { get; set; }
 
         [JsonPropertyName("messages")]
-        public List<Message> Messages { get; set; }
+        public List<ConversationItem> Messages { get; set; }
 
         [JsonPropertyName("title")]
         public string Title { get; set; }

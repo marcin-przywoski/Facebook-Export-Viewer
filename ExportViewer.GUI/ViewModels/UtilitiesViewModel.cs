@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,6 +14,7 @@ using ExportViewer.GUI.Interfaces;
 using ExportViewer.GUI.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Message = ExportViewer.Core.Models.Common.Message;
 
 namespace ExportViewer.GUI.ViewModels
 {
@@ -58,7 +59,7 @@ namespace ExportViewer.GUI.ViewModels
 
                 var exportFiles = await dataParsingService.GetExportFiles(sourceFolderPath , exportType , progress);
 
-                var messages = new List<IMessage>();
+                var messages = new List<Message>();
 
                 foreach (var file in exportFiles)
                 {

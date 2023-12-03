@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace ExportViewer.Core.Models.JSON
 {
-    public class Message
+    public class ConversationItem
     {
         [JsonConverter(typeof(MilisecondEpochConverter))]
         [JsonPropertyName("timestamp_ms")]

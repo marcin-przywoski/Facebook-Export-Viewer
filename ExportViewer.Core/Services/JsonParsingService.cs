@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExportViewer.Core.Models.Interfaces;
+using ExportViewer.Core.Models.Common;
 using ExportViewer.Core.Models.JSON;
 using ExportViewer.Core.Services.Interfaces;
 using Microsoft.VisualBasic;
@@ -15,13 +16,13 @@ namespace ExportViewer.Core.Services
 {
     public class JsonParsingService : IJsonParsingService
     {
-        public async Task<IEnumerable<IMessage>> GetMessages(string filePath, CultureInfo locale, string exportLocation)
+        public async Task<IEnumerable<Message>> GetMessages(string filePath, CultureInfo locale, string exportLocation)
         {
             var conversation = JsonSerializer.Deserialize<Conversation>(await File.ReadAllTextAsync(filePath));
 
             conversation.Messages.RemoveAll(s => s.Photos is null && s.Gifs is null && s.Videos is null);
 
-            var messages = new List<IMessage>();
+            var messages = new List<Message>();
             foreach ( var message in conversation.Messages )
             {
                 if(message.Gifs != null)
@@ -30,9 +31,7 @@ namespace ExportViewer.Core.Services
                     {
                         if (File.Exists(exportLocation + gif.Link))
                         {
-                            gif.Date = message.Date;
-
-                            messages.Add(gif);
+                            messages.Add(new Message { Date = message.Date, Link = gif.Link});
                         }
 
 
@@ -46,7 +45,7 @@ namespace ExportViewer.Core.Services
 
                         if (File.Exists(exportLocation + photo.Link))
                         {
-                            messages.Add(photo);
+                            messages.Add(new Message { Date = message.Date , Link = photo.Link });
                         }
                     }
                 }
@@ -57,7 +56,7 @@ namespace ExportViewer.Core.Services
                     {
                         if (File.Exists(exportLocation + video.Link))
                         {
-                            messages.Add(video);
+                            messages.Add(new Message { Date = message.Date, Link = video.Link });
                         }
                     }
                 }

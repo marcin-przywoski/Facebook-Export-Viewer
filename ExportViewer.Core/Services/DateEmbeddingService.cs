@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using ExportViewer.Core.Models.Common;
 using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Services.Interfaces;
 
@@ -10,7 +11,7 @@ namespace ExportViewer.Core.Services
 {
     public class DateEmbeddingService : IDateEmbeddingService
     {
-        public Task EmbeddDate(IMessage message, string exportLocation, string destinationPath, IProgress<string> progress)
+        public Task EmbeddDate(Message message, string exportLocation, string destinationPath, IProgress<string> progress)
         {
             progress.Report($"Processing {message.Link}");
             if(File.Exists(exportLocation + message.Link)) 

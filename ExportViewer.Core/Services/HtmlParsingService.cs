@@ -11,7 +11,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using AngleSharp.XPath;
-using ExportViewer.Core.Models.HTML;
+using ExportViewer.Core.Models.Common;
 using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Services.Interfaces;
 
@@ -19,7 +19,7 @@ namespace ExportViewer.Core.Services
 {
     public class HtmlParsingService : IHtmlParsingService
     {
-        public async Task<IEnumerable<IMessage>> GetMessages (string filePath , CultureInfo locale , string exportLocation)
+        public async Task<IEnumerable<Message>> GetMessages (string filePath , CultureInfo locale , string exportLocation)
         {
             ConcurrentBag<Message> messages = new ConcurrentBag<Message>();
 
