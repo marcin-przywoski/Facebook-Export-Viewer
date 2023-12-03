@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -36,7 +36,7 @@ namespace ExportViewer.GUI.ViewModels
         public UtilitiesModel _utilitiesModel { get; set; } = new UtilitiesModel();
 
         [RelayCommand]
-        async void OnStart ()
+        async Task OnStart ()
         {
             if (String.IsNullOrEmpty(_utilitiesModel.SourcePath) || String.IsNullOrEmpty(_utilitiesModel.DestinationPath))
             {
