@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -12,12 +12,13 @@ using ExportViewer.Core.Enums;
 using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Services.Interfaces;
 using System.Text.Json;
+using ExportViewer.Core.Models.Common;
 
 namespace ExportViewer.Core.Services
 {
     public class DataParsingService : IDataParsingService
     {
-        public async Task<IEnumerable<IMessage>> GetExportFileMessages(string exportLocation, string exportFileLocation, ExportType type, CultureInfo locale, IProgress<string> progress)
+        public async Task<IEnumerable<Message>> GetExportFileMessages (string exportLocation , string exportFileLocation , ExportType type , CultureInfo locale , IProgress<string> progress)
         {
             progress.Report($"Processing {exportFileLocation}");
 

@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using ExportViewer.Core.Models.Common;
 using ExportViewer.Core.Models.Interfaces;
 using ExportViewer.Core.Services.Interfaces;
 
