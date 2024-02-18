@@ -34,7 +34,7 @@ namespace ExportViewer.Core.Services
 
                 return await parsingService.GetMessages(exportFileLocation, locale, exportLocation);
             }
-            return Enumerable.Empty<IMessage>();
+            return Enumerable.Empty<Message>();
 
         }
 
