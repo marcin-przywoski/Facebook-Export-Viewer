@@ -30,6 +30,7 @@ namespace ExportViewer.GUI
 
         private void ConfigureServices(ServiceCollection services)
         {
+            services.AddLogging();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<Main>();
             services.AddSingleton<IHtmlParsingService, HtmlParsingService>();
