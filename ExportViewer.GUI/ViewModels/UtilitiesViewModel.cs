@@ -39,7 +39,7 @@ namespace ExportViewer.GUI.ViewModels
 
 
         [RelayCommand]
-        async void OnStart ()
+        async Task OnStart ()
         {
             if (String.IsNullOrEmpty(_utilitiesModel.SourcePath) || String.IsNullOrEmpty(_utilitiesModel.DestinationPath))
             {
