@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -30,7 +30,6 @@ namespace ExportViewer.GUI
 
         private void ConfigureServices(ServiceCollection services)
         {
-            services.AddLogging();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<Main>();
             services.AddSingleton<IHtmlParsingService, HtmlParsingService>();
