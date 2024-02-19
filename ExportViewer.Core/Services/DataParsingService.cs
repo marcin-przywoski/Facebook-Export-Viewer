@@ -120,8 +120,12 @@ namespace ExportViewer.Core.Services
                         return new CultureInfo(locale, false);
                     }
                 }
+                else
+                {
+                    return CultureInfo.CurrentCulture;
+                }
 
-                preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.html");
+                preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.html");
                 if (File.Exists(preferencesLocation))
                 {
                     string preferences = await File.ReadAllTextAsync(preferencesLocation);
@@ -130,8 +134,12 @@ namespace ExportViewer.Core.Services
                     if (locale != null)
                     {
                         progress.Report($"Export language: {locale}");
-                        return new CultureInfo(locale, false);
+                        return new CultureInfo(locale , false);
                     }
+                }
+                else
+                {
+                    return CultureInfo.CurrentCulture;
                 }
             }
             else if (exportType == ExportType.Json)
