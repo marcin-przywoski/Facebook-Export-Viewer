@@ -125,6 +125,7 @@ jobs:
         --repo "${{ github.event.repository.full_name }}"
         --title "${{ github.ref_name }}"
         --verify-tag
+        --generate-notes
     
 
 
