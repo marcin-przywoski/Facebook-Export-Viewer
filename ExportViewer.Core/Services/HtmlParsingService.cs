@@ -52,7 +52,7 @@ namespace ExportViewer.Core.Services
                 });
 
             }
-            else
+            else if (document.QuerySelectorAll("div._3-95._a6-g").Any())
             {
                 divs = document.QuerySelectorAll("div._3-95._a6-g");
 
@@ -89,6 +89,56 @@ namespace ExportViewer.Core.Services
 
                 });
 
+            }
+            else if (document.QuerySelectorAll("div._a6-g").Any())
+            {
+                divs = document.QuerySelectorAll("div._a6-g");
+
+                if (locale.DisplayName == "pl_PL")
+                {
+                    locale.DateTimeFormat.PMDesignator = "po południu";
+                    locale.DateTimeFormat.AMDesignator = "rano";
+                }
+
+                Parallel.ForEach(divs , node =>
+                {
+
+                    var divImage = node.QuerySelector("img._a6_o._3-96");
+                    var divVideo = node.QuerySelector("video._a6_o._3-96");
+                    var divDate = node.QuerySelector("div._3-94._a6-o")?.QuerySelector("div._a72d");
+
+                    if (((divImage != null && divDate != null) || (divVideo != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
+                    {
+                        string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
+                        if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
+                        {
+                            if (Thread.CurrentThread.CurrentCulture.IsReadOnly || locale.IsReadOnly)
+                            {
+                                var clone = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+                                clone.DateTimeFormat.PMDesignator = "po południu";
+                                clone.DateTimeFormat.AMDesignator = "rano";
+                                Thread.CurrentThread.CurrentCulture = clone;
+                                Thread.CurrentThread.CurrentUICulture = clone;
+                                locale = clone;
+                            }
+                            else
+                            {
+                                locale.DateTimeFormat.PMDesignator = "po południu";
+                                locale.DateTimeFormat.AMDesignator = "rano";
+                            }
+
+
+
+                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
+
+                            if (File.Exists(exportLocation + href))
+                            {
+                                messages.Add(new Message { Link = href , Date = parsedDate });
+                            }
+                        }
+                    }
+
+                });
             }
 
             return messages.AsEnumerable();
