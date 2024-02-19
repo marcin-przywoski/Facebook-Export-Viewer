@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -31,6 +31,7 @@ namespace ExportViewer.GUI
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<MainWindow>();
+            services.AddSingleton<Main>();
             services.AddSingleton<IHtmlParsingService, HtmlParsingService>();
             services.AddSingleton<IJsonParsingService, JsonParsingService>();
             services.AddSingleton<IDataParsingService, DataParsingService>();
@@ -40,7 +41,7 @@ namespace ExportViewer.GUI
         }
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            var mainWindow = serviceProvider.GetService<MainWindow>();
+            var mainWindow = serviceProvider.GetService<Main>();
             mainWindow.Show();
         }
     }
