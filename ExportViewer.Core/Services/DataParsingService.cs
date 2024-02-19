@@ -71,6 +71,29 @@ namespace ExportViewer.Core.Services
                     Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
                 }
             }
+            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/" })
+            {
+                var subDirectoryLocation = Path.Combine(exportLocation , "your_activity_across_facebook" , "messages" , subDirectory);
+                var fileExtension = fileExtensions[type];
+                if (Directory.Exists(subDirectoryLocation))
+                {
+                    try
+                    {
+                        exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation , fileExtensions[type] , SearchOption.AllDirectories));
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle the exception or log the error
+                        Console.WriteLine($"Error getting files from {subDirectoryLocation}: {ex.Message}");
+                    }
+
+                }
+                else
+                {
+                    // Handle the case when the directory does not exist
+                    Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
+                }
+            }
 
             return Task.FromResult<IEnumerable<string>>(exportFiles);
         }
