@@ -144,7 +144,7 @@ namespace ExportViewer.Core.Services
             }
             else if (exportType == ExportType.Json)
             {
-                preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.json");
+                preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.json");
                 if (File.Exists(preferencesLocation))
                 {
                     string json = await File.ReadAllTextAsync(preferencesLocation);
@@ -165,7 +165,7 @@ namespace ExportViewer.Core.Services
 
 
 
-        public Task<ExportType> GetExportType(string exportLocation, IProgress<string> progress)
+        public Task<ExportType> GetExportType (string exportLocation , IProgress<string> progress)
         {
             string jsonSearchPattern = "*.json";
             string htmlSearchPattern = "*.html";
