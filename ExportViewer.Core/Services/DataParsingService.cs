@@ -26,21 +26,21 @@ namespace ExportViewer.Core.Services
             {
                 var parsingService = new HtmlParsingService();
 
-                return await parsingService.GetMessages(exportFileLocation, locale, exportLocation);
-        }
+                return await parsingService.GetMessages(exportFileLocation , locale , exportLocation);
+            }
             else if (type == ExportType.Json)
             {
                 var parsingService = new JsonParsingService();
 
-                return await parsingService.GetMessages(exportFileLocation, locale, exportLocation);
+                return await parsingService.GetMessages(exportFileLocation , locale , exportLocation);
             }
             return Enumerable.Empty<Message>();
 
         }
 
-        public Task<IEnumerable<string>> GetExportFiles(string exportLocation, ExportType type, IProgress<string> progress)
+        public Task<IEnumerable<string>> GetExportFiles (string exportLocation , ExportType type , IProgress<string> progress)
         {
-            var fileExtensions = new Dictionary<ExportType, string>
+            var fileExtensions = new Dictionary<ExportType , string>
             {
                 { ExportType.HTML, "*.html" },
                 { ExportType.Json, "*.json" }
@@ -48,17 +48,17 @@ namespace ExportViewer.Core.Services
 
             var exportFiles = new List<string>();
 
-            foreach (var subDirectory in new[] { "archived_threads/", "filtered_threads/", "inbox/" })
+            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/" })
             {
-                var subDirectoryLocation = Path.Combine(exportLocation, "messages/", subDirectory);
+                var subDirectoryLocation = Path.Combine(exportLocation , "messages/" , subDirectory);
                 var fileExtension = fileExtensions[type];
 
                 if (Directory.Exists(subDirectoryLocation))
                 {
                     try
                     {
-                exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation, fileExtension, SearchOption.AllDirectories));
-            }
+                        exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation , fileExtension , SearchOption.AllDirectories));
+                    }
                     catch (Exception ex)
                     {
                         // Handle the exception or log the error
@@ -71,12 +71,35 @@ namespace ExportViewer.Core.Services
                     Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
                 }
             }
+            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/" })
+            {
+                var subDirectoryLocation = Path.Combine(exportLocation , "your_activity_across_facebook" , "messages" , subDirectory);
+                var fileExtension = fileExtensions[type];
+                if (Directory.Exists(subDirectoryLocation))
+                {
+                    try
+                    {
+                        exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation , fileExtensions[type] , SearchOption.AllDirectories));
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle the exception or log the error
+                        Console.WriteLine($"Error getting files from {subDirectoryLocation}: {ex.Message}");
+                    }
+
+                }
+                else
+                {
+                    // Handle the case when the directory does not exist
+                    Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
+                }
+            }
 
             return Task.FromResult<IEnumerable<string>>(exportFiles);
         }
 
 
-        public async Task<CultureInfo> GetExportLanguage(string exportLocation, ExportType exportType, IProgress<string> progress)
+        public async Task<CultureInfo> GetExportLanguage (string exportLocation , ExportType exportType , IProgress<string> progress)
         {
             string preferencesLocation;
             string locale;
@@ -85,7 +108,7 @@ namespace ExportViewer.Core.Services
 
             if (exportType == ExportType.HTML)
             {
-                preferencesLocation = Path.Combine(exportLocation, "about_you/preferences.html");
+                preferencesLocation = Path.Combine(exportLocation , "about_you/preferences.html");
                 if (File.Exists(preferencesLocation))
                 {
                     string preferences = await File.ReadAllTextAsync(preferencesLocation);
@@ -94,11 +117,15 @@ namespace ExportViewer.Core.Services
                     if (locale != null)
                     {
                         progress.Report($"Export language: {locale}");
-                        return new CultureInfo(locale, false);
+                        return new CultureInfo(locale , false);
                     }
                 }
+                else
+                {
+                    return CultureInfo.CurrentCulture;
+                }
 
-                preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.html");
+                preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.html");
                 if (File.Exists(preferencesLocation))
                 {
                     string preferences = await File.ReadAllTextAsync(preferencesLocation);
@@ -107,13 +134,17 @@ namespace ExportViewer.Core.Services
                     if (locale != null)
                     {
                         progress.Report($"Export language: {locale}");
-                        return new CultureInfo(locale, false);
+                        return new CultureInfo(locale , false);
                     }
+                }
+                else
+                {
+                    return CultureInfo.CurrentCulture;
                 }
             }
             else if (exportType == ExportType.Json)
             {
-                preferencesLocation = Path.Combine(exportLocation, "preferences/language_and_locale.json");
+                preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.json");
                 if (File.Exists(preferencesLocation))
                 {
                     string json = await File.ReadAllTextAsync(preferencesLocation);
@@ -134,13 +165,13 @@ namespace ExportViewer.Core.Services
 
 
 
-        public Task<ExportType> GetExportType(string exportLocation, IProgress<string> progress)
+        public Task<ExportType> GetExportType (string exportLocation , IProgress<string> progress)
         {
             string jsonSearchPattern = "*.json";
             string htmlSearchPattern = "*.html";
 
-            bool hasJsonFiles = Directory.EnumerateFiles(exportLocation, jsonSearchPattern, SearchOption.AllDirectories).Any();
-            bool hasHtmlFiles = Directory.EnumerateFiles(exportLocation, htmlSearchPattern, SearchOption.AllDirectories).Any();
+            bool hasJsonFiles = Directory.EnumerateFiles(exportLocation , jsonSearchPattern , SearchOption.AllDirectories).Any();
+            bool hasHtmlFiles = Directory.EnumerateFiles(exportLocation , htmlSearchPattern , SearchOption.AllDirectories).Any();
 
             if (hasJsonFiles)
             {
