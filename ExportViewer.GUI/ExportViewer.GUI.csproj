@@ -9,7 +9,7 @@
 		<RepositoryType>public</RepositoryType>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
     <Nullable>enable</Nullable>
-    <Version>0.02.01</Version>
+    <Version>0.03.01</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
   </PropertyGroup>
