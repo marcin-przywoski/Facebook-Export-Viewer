@@ -104,39 +104,71 @@ namespace ExportViewer.Core.Services
                 Parallel.ForEach(divs , node =>
                 {
 
-                    var divImage = node.QuerySelector("img._a6_o._3-96");
-                    var divVideo = node.QuerySelector("video._a6_o._3-96");
+                    var divImages = node.QuerySelectorAll("img._a6_o._3-96");
+                    var divVideos = node.QuerySelectorAll("video._a6_o._3-96");
                     var divDate = node.QuerySelector("div._3-94._a6-o")?.QuerySelector("div._a72d");
 
-                    if (((divImage != null && divDate != null) || (divVideo != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
+                    if (((divImages != null && divDate != null) || (divVideos != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
                     {
-                        string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
-                        if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
+                        Parallel.ForEach(divImages , divImage =>
                         {
-                            if (Thread.CurrentThread.CurrentCulture.IsReadOnly || locale.IsReadOnly)
+                            string href = divImage.GetAttribute("src");
+                            if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif")))
                             {
-                                var clone = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
-                                clone.DateTimeFormat.PMDesignator = "po południu";
-                                clone.DateTimeFormat.AMDesignator = "rano";
-                                Thread.CurrentThread.CurrentCulture = clone;
-                                Thread.CurrentThread.CurrentUICulture = clone;
-                                locale = clone;
+                                if (Thread.CurrentThread.CurrentCulture.IsReadOnly || locale.IsReadOnly)
+                                {
+                                    var clone = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+                                    clone.DateTimeFormat.PMDesignator = "po południu";
+                                    clone.DateTimeFormat.AMDesignator = "rano";
+                                    Thread.CurrentThread.CurrentCulture = clone;
+                                    Thread.CurrentThread.CurrentUICulture = clone;
+                                    locale = clone;
+                                }
+                                else
+                                {
+                                    locale.DateTimeFormat.PMDesignator = "po południu";
+                                    locale.DateTimeFormat.AMDesignator = "rano";
+                                }
+
+
+                                DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
+
+                                if (File.Exists(exportLocation + href))
+                                {
+                                    messages.Add(new Message { Link = href , Date = parsedDate });
+                                }
                             }
-                            else
+                        });
+
+                        Parallel.ForEach(divVideos , divVideo =>
+                        {
+                            string href = divVideo.GetAttribute("src");
+                            if ((!href.StartsWith("http") || !href.StartsWith("https")) && href.EndsWith(".mp4"))
                             {
-                                locale.DateTimeFormat.PMDesignator = "po południu";
-                                locale.DateTimeFormat.AMDesignator = "rano";
+                                if (Thread.CurrentThread.CurrentCulture.IsReadOnly || locale.IsReadOnly)
+                                {
+                                    var clone = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+                                    clone.DateTimeFormat.PMDesignator = "po południu";
+                                    clone.DateTimeFormat.AMDesignator = "rano";
+                                    Thread.CurrentThread.CurrentCulture = clone;
+                                    Thread.CurrentThread.CurrentUICulture = clone;
+                                    locale = clone;
+                                }
+                                else
+                                {
+                                    locale.DateTimeFormat.PMDesignator = "po południu";
+                                    locale.DateTimeFormat.AMDesignator = "rano";
+                                }
+
+
+                                DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
+
+                                if (File.Exists(exportLocation + href))
+                                {
+                                    messages.Add(new Message { Link = href , Date = parsedDate });
+                                }
                             }
-
-
-
-                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
-
-                            if (File.Exists(exportLocation + href))
-                            {
-                                messages.Add(new Message { Link = href , Date = parsedDate });
-                            }
-                        }
+                        });
                     }
 
                 });
