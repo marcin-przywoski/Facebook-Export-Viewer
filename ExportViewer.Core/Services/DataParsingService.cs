@@ -71,7 +71,7 @@ namespace ExportViewer.Core.Services
                     Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
                 }
             }
-            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/" })
+            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/", "e2ee_cutover/" })
             {
                 var subDirectoryLocation = Path.Combine(exportLocation , "your_activity_across_facebook" , "messages" , subDirectory);
                 var fileExtension = fileExtensions[type];
