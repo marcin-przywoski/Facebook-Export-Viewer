@@ -18,7 +18,7 @@ using Message = ExportViewer.Core.Models.Common.Message;
 
 namespace ExportViewer.GUI.ViewModels
 {
-    public partial class UtilitiesViewModel
+    public partial class UtilitiesViewModel : IMenuItem
     {
         private readonly IHtmlParsingService htmlParsingService = App.Current.serviceProvider.GetRequiredService<IHtmlParsingService>();
         private readonly IJsonParsingService jsonParsingService = App.Current.serviceProvider.GetRequiredService<IJsonParsingService>();
@@ -31,13 +31,15 @@ namespace ExportViewer.GUI.ViewModels
         {
 
         }
+        public string Title => "Utilities";
 
         public IUtilities Utilities { get; set; }
 
         public UtilitiesModel _utilitiesModel { get; set; } = new UtilitiesModel();
 
+
         [RelayCommand]
-        async void OnStart ()
+        async Task OnStart ()
         {
             if (String.IsNullOrEmpty(_utilitiesModel.SourcePath) || String.IsNullOrEmpty(_utilitiesModel.DestinationPath))
             {
