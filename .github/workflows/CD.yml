@@ -28,9 +28,6 @@ jobs:
       - name: Build & publish (v3.1) (self contained - dependencies included)
         run: dotnet publish ExportViewer.GUI/ -o ExportViewer.GUI/bin/Publish/netcoreapp3.1/self-contained-dependencies-included --configuration Release -f netcoreapp3.1 -r win-x64 --self-contained
 
-      - name: Build & publish (v3.1) (self contained - single file)
-        run: dotnet publish ExportViewer.GUI/ -o ExportViewer.GUI/bin/Publish/netcoreapp3.1/self-contained-single-file -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true
-
       - name: Build & publish (v3.1) (self contained - ReadyToRun)
         run: dotnet publish ExportViewer.GUI/ -o ExportViewer.GUI/bin/Publish/netcoreapp3.1/self-contained-single-file-RTR -r win-x64 --self-contained --configuration Release -f netcoreapp3.1 /p:PublishSingleFile=True /p:IncludeNativeLibrariesForSelfExtract=true /p:PublishReadyToRun=true
 
@@ -49,14 +46,6 @@ jobs:
         with:
             name: ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included
             path: ExportViewer.GUI/bin/Publish/netcoreapp3.1/self-contained-dependencies-included/
-
-      - name: Upload release asset (v3.1) (self contained - single file)
-        uses: actions/upload-artifact@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file
-          path: ExportViewer.GUI/bin/Publish/netcoreapp3.1/self-contained-single-file/
 
       - name: Upload release asset (v3.1) (self contained - ReadyToRun)
         uses: actions/upload-artifact@v3
@@ -85,12 +74,6 @@ jobs:
         name: ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included
         path: ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included
 
-    - name: Download artifacts (v3.1) (self contained - single file)
-      uses: actions/download-artifact@v3
-      with:
-        name: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file
-        path: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file
-
     - name: Download artifacts (v3.1) (self contained - ReadyToRun)
       uses: actions/download-artifact@v3
       with:
@@ -105,10 +88,6 @@ jobs:
       run: Compress-Archive -Path ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included/* -DestinationPath ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included.zip -Force
       shell: pwsh
 
-    - name: Create package (v3.1) (self contained - single file)
-      run: Compress-Archive -Path ExportViewer.GUI-netcoreapp3.1-self-contained-single-file/* -DestinationPath ExportViewer.GUI-netcoreapp3.1-self-contained-single-file.zip -Force
-      shell: pwsh
-
     - name: Create package (v3.1) (self contained - ReadyToRun)
       run: Compress-Archive -Path ExportViewer.GUI-netcoreapp3.1-self-contained-single-file-RTR/* -DestinationPath ExportViewer.GUI-netcoreapp3.1-self-contained-single-file-RTR.zip -Force
       shell: pwsh
@@ -120,7 +99,6 @@ jobs:
         gh release create "${{ github.ref_name }}"
         "ExportViewer.GUI-netcoreapp3.1-framework-dependent.zip"
         "ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included.zip"
-        "ExportViewer.GUI-netcoreapp3.1-self-contained-single-file.zip"
         "ExportViewer.GUI-netcoreapp3.1-self-contained-single-file-RTR.zip"
         --repo "${{ github.event.repository.full_name }}"
         --title "${{ github.ref_name }}"
