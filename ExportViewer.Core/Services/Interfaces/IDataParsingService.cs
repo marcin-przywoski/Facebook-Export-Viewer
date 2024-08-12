@@ -11,7 +11,7 @@ namespace ExportViewer.Core.Services.Interfaces
 {
     public interface IDataParsingService
     {
-        public Task<CultureInfo> GetExportLanguage(string exportLocation, ExportType type, IProgress<string> progress);
+        public Task<CultureInfo?> GetExportLanguage (string exportLocation , ExportType type , IProgress<string> progress);
 
         public Task<IEnumerable<Message>> GetExportFileMessages(string exportLocation, string exportFileLocation, ExportType type, CultureInfo locale, IProgress<string> progress);
 

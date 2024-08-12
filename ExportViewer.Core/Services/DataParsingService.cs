@@ -99,7 +99,7 @@ namespace ExportViewer.Core.Services
         }
 
 
-        public async Task<CultureInfo> GetExportLanguage (string exportLocation , ExportType exportType , IProgress<string> progress)
+        public async Task<CultureInfo?> GetExportLanguage (string exportLocation , ExportType exportType , IProgress<string> progress)
         {
             string preferencesLocation;
             string locale;
