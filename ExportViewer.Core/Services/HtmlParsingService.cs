@@ -60,6 +60,7 @@ namespace ExportViewer.Core.Services
                                     locale.DateTimeFormat.PMDesignator = "po południu";
                                     locale.DateTimeFormat.AMDesignator = "rano";
                                 }
+
                                 bool isValidDate = DateTime.TryParse(dateElement.TextContent , out var parsedDate);
                                 if (!isValidDate)
                                 {
@@ -96,6 +97,7 @@ namespace ExportViewer.Core.Services
                                     locale.DateTimeFormat.PMDesignator = "po południu";
                                     locale.DateTimeFormat.AMDesignator = "rano";
                                 }
+
                                 bool isValidDate = DateTime.TryParse(dateElement.TextContent , out var parsedDate);
                                 if (!isValidDate)
                                 {
@@ -111,6 +113,7 @@ namespace ExportViewer.Core.Services
                     }
                 });
             }
+            
             return messages;
         }
     }
