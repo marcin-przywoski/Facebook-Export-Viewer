@@ -120,10 +120,6 @@ namespace ExportViewer.Core.Services
                         return new CultureInfo(locale , false);
                     }
                 }
-                else
-                {
-                    return CultureInfo.CurrentCulture;
-                }
 
                 preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.html");
                 if (File.Exists(preferencesLocation))
