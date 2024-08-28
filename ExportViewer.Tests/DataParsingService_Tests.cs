@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using ExportViewer.Core.Enums;
 using ExportViewer.Core.Services;
 using Xunit;
@@ -18,7 +19,7 @@ namespace ExportViewer.Tests
         }
 
         [Fact]
-        public async void GetExportType_ReturnsJson ()
+        public async Task GetExportType_ReturnsJson ()
         {
             // Arrange
             string tempDir = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
@@ -27,7 +28,7 @@ namespace ExportViewer.Tests
             string jsonFilePath = Path.Combine(tempDir , "test.json");
             if (!File.Exists(jsonFilePath))
             {
-                File.Create(jsonFilePath);
+                await File.Create(jsonFilePath).DisposeAsync();
             }
 
             // Act
@@ -38,7 +39,7 @@ namespace ExportViewer.Tests
         }
 
         [Fact]
-        public async void GetExportType_ReturnsHtml ()
+        public async Task GetExportType_ReturnsHtml ()
         {
             // Arrange
             string tempDir = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
@@ -47,7 +48,7 @@ namespace ExportViewer.Tests
             string htmlFilePath = Path.Combine(tempDir , "test.html");
             if (!File.Exists(htmlFilePath))
             {
-                File.Create(htmlFilePath);
+                await File.Create(htmlFilePath).DisposeAsync();
             }
 
             // Act
