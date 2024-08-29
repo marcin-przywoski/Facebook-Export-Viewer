@@ -155,7 +155,7 @@ namespace ExportViewer.Core.Services
                 }
             }
 
-            return null;
+            return CultureInfo.CurrentCulture;
         }
 
 
