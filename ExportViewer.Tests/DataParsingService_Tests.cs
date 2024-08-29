@@ -57,5 +57,26 @@ namespace ExportViewer.Tests
             // Assert
             Assert.Equal(ExportType.HTML , result);
         }
+
+        [Theory]
+        [InlineData("./TestData/GetExportLanguageXPath1")]
+        [InlineData("./TestData/GetExportLanguageXPath2")]
+        public async Task GetExportLanguage_Html_ReturnsCultureInfo (string exportLocation)
+        {
+            string fullPath = Path.Combine(Path.GetFullPath(exportLocation));
+            var locale = await _dataParsingService.GetExportLanguage(fullPath , ExportType.HTML , _progress);
+
+            Assert.Equal("en-US" , locale.Name);
+        }
+
+        [Fact]
+        public async Task GetExportLanguage_Json_ReturnsCultureInfo()
+        {
+            string exportLocation = "./TestData/GetExportLanguageJson";
+            string fullPath = Path.Combine(Path.GetFullPath(exportLocation));
+            var locale = await _dataParsingService.GetExportLanguage(fullPath , ExportType.Json , _progress);
+
+            Assert.Equal("en-US" , locale.Name);
+        }
     }
 }
