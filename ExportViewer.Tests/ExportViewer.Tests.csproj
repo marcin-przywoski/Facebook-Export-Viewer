@@ -33,4 +33,10 @@
     <ProjectReference Include="..\ExportViewer.Core\ExportViewer.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="TestData\**\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>  
+  </ItemGroup>
+
 </Project>
