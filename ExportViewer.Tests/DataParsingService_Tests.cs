@@ -88,14 +88,29 @@ namespace ExportViewer.Tests
             Directory.Delete(exportPath , true);
         }
 
-        [Fact]
-        public async Task GetExportLanguage_Json_ReturnsCultureInfo()
+        [Theory]
+        [InlineData("language_and_locale_v2[0].children[0].entries[0].data.value","preferences/language_and_locale.json")]
+        public async Task GetExportLanguage_Json_ReturnsCultureInfo(string jsonPath, string folderScheme)
         {
-            string exportLocation = "./TestData/GetExportLanguageJson";
-            string fullPath = Path.Combine(Path.GetFullPath(exportLocation));
-            var locale = await _dataParsingService.GetExportLanguage(fullPath , ExportType.Json , _progress);
+            string jsonString = HelperMethods.Json.GenerateLanguageJson(jsonPath);
+                        string exportPath = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
+            string fullPath = Path.Combine(exportPath , folderScheme);
+            string? dir = Path.GetDirectoryName(fullPath);
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            File.WriteAllText(fullPath , jsonString);
+
+            var locale = await _dataParsingService.GetExportLanguage(exportPath , ExportType.Json , _progress);
 
             Assert.Equal("en-US" , locale.Name);
+            _output.WriteLine($"Export language: {locale.Name} \n Export JSON string: {jsonString}");
+
+            //Cleanup
+            Directory.Delete(exportPath , true);
         }
     }
 }
