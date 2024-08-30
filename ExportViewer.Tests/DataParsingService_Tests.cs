@@ -63,14 +63,29 @@ namespace ExportViewer.Tests
         }
 
         [Theory]
-        [InlineData("./TestData/GetExportLanguageXPath1")]
-        [InlineData("./TestData/GetExportLanguageXPath2")]
-        public async Task GetExportLanguage_Html_ReturnsCultureInfo(string exportLocation)
+        [InlineData("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]" , "about_you/preferences.html")]
+        [InlineData("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]" , "preferences/language_and_locale.html")]
+        public async Task GetExportLanguage_HtmlFromXPath_ReturnsCultureInfo(string xPath , string folderScheme)
         {
-            string fullPath = Path.Combine(Path.GetFullPath(exportLocation));
-            var locale = await _dataParsingService.GetExportLanguage(fullPath , ExportType.HTML , _progress);
+            string htmlString = HelperMethods.Html.GenerateLanguageHtml(xPath);
+            string exportPath = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
+            string fullPath = Path.Combine(exportPath , folderScheme);
+            string? dir = Path.GetDirectoryName(fullPath);
+
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            File.WriteAllText(fullPath , htmlString);
+
+            var locale = await _dataParsingService.GetExportLanguage(exportPath , ExportType.HTML , _progress);
 
             Assert.Equal("en-US" , locale.Name);
+            _output.WriteLine($"Export language: {locale.Name} \n Export HTML string: {htmlString}");
+
+            //Cleanup
+            Directory.Delete(exportPath , true);
         }
 
         [Fact]
