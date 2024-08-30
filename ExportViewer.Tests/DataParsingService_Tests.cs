@@ -19,7 +19,7 @@ namespace ExportViewer.Tests
         }
 
         [Fact]
-        public async Task GetExportType_ReturnsJson ()
+        public async Task GetExportType_ReturnsJson()
         {
             // Arrange
             string tempDir = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
@@ -39,7 +39,7 @@ namespace ExportViewer.Tests
         }
 
         [Fact]
-        public async Task GetExportType_ReturnsHtml ()
+        public async Task GetExportType_ReturnsHtml()
         {
             // Arrange
             string tempDir = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
@@ -61,7 +61,7 @@ namespace ExportViewer.Tests
         [Theory]
         [InlineData("./TestData/GetExportLanguageXPath1")]
         [InlineData("./TestData/GetExportLanguageXPath2")]
-        public async Task GetExportLanguage_Html_ReturnsCultureInfo (string exportLocation)
+        public async Task GetExportLanguage_Html_ReturnsCultureInfo(string exportLocation)
         {
             string fullPath = Path.Combine(Path.GetFullPath(exportLocation));
             var locale = await _dataParsingService.GetExportLanguage(fullPath , ExportType.HTML , _progress);
