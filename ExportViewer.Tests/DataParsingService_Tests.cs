@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ExportViewer.Core.Enums;
 using ExportViewer.Core.Services;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ExportViewer.Tests
 {
@@ -11,11 +12,14 @@ namespace ExportViewer.Tests
     {
         private readonly DataParsingService _dataParsingService;
 
+        private readonly ITestOutputHelper _output;
+
         private readonly IProgress<string> _progress = new Progress<string>(s => Console.WriteLine(s));
 
-        public DataParsingService_Tests ()
+        public DataParsingService_Tests(ITestOutputHelper output)
         {
             _dataParsingService = new DataParsingService();
+            _output = output;
         }
 
         [Fact]
