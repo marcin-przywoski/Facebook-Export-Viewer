@@ -43,7 +43,7 @@ namespace ExportViewer.Core.Services
 
                             DateTime date = Convert.ToDateTime(divDate , locale);
 
-                            if (File.Exists(exportLocation + href))
+                            if (File.Exists(Path.Combine(exportLocation, href)))
                             {
                                 messages.Add(new Message { Link = href , Date = date });
                             }
@@ -81,7 +81,7 @@ namespace ExportViewer.Core.Services
 
                             DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
 
-                            if (File.Exists(exportLocation + href))
+                            if (File.Exists(Path.Combine(exportLocation, href)))
                             {
                                 messages.Add(new Message { Link = href , Date = parsedDate });
                             }
@@ -133,7 +133,7 @@ namespace ExportViewer.Core.Services
 
                                 DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
 
-                                if (File.Exists(exportLocation + href))
+                                if (File.Exists(Path.Combine(exportLocation, href)))
                                 {
                                     messages.Add(new Message { Link = href , Date = parsedDate });
                                 }
@@ -163,7 +163,7 @@ namespace ExportViewer.Core.Services
 
                                 DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
 
-                                if (File.Exists(exportLocation + href))
+                                if (File.Exists(Path.Combine(exportLocation, href)))
                                 {
                                     messages.Add(new Message { Link = href , Date = parsedDate });
                                 }
