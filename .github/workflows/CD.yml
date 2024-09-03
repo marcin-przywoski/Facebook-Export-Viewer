@@ -74,25 +74,25 @@ jobs:
       contents: write
     steps:
     - name: Download artifacts (v3.1) (framework dependant)
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ExportViewer.GUI-netcoreapp3.1-framework-dependent
         path: ExportViewer.GUI-netcoreapp3.1-framework-dependent
 
     - name: Download artifacts (v3.1) (self contained - dependencies included)
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included
         path: ExportViewer.GUI-netcoreapp3.1-self-contained-dependencies-included
 
     - name: Download artifacts (v3.1) (self contained - single file)
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file
         path: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file
 
     - name: Download artifacts (v3.1) (self contained - ReadyToRun)
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file-RTR
         path: ExportViewer.GUI-netcoreapp3.1-self-contained-single-file-RTR
