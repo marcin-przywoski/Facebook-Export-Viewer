@@ -1,4 +1,6 @@
 
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
@@ -60,6 +62,62 @@ namespace ExportViewer.Tests.HelperMethods
             }
 
             return document.DocumentElement.OuterHtml;
+        }
+
+        public static (string html, List<string> mediaFilePaths) GenerateMessagesHtml (string nodesXPath , string dateXpath)
+        {
+            var mediaFilePaths = new List<string>();
+            var random = new Random();
+            var parser = new HtmlParser();
+            var document = parser.ParseDocument("<html><body></body></html>");
+            string[] parts = nodesXPath.Trim('/').Split('/');
+            IElement currentElement = document.Body;
+            foreach (string part in parts)
+            {
+                var match = Regex.Match(part , @"^(\w+)(?:\.([\w-]+(?:\.[\w-]+)*))?$");
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                string tagName = match.Groups[1].Value;
+                string cssClasses = match.Groups[2].Value;
+
+                for (int i = 0; i < random.Next(0 , 8); i++)
+                {
+                    var messageDiv = document.CreateElement(tagName);
+
+                    if (!string.IsNullOrEmpty(cssClasses))
+                    {
+                        foreach (string cssClass in cssClasses.Split('.'))
+                        {
+                            messageDiv.ClassList.Add(cssClass);
+                        }
+                    }
+
+                    var classes = dateXpath.Split('.');
+                    // Create a div element to represent the date and add it to parent div
+                    var dateElement = document.CreateElement("div");
+
+                    foreach (string cssClass in classes)
+                    {
+                        dateElement.ClassList.Add(cssClass);
+                    }
+
+                    dateElement.TextContent = DateTime.Now.ToString("yyyy-MM-dd");
+                    messageDiv.AppendChild(dateElement);
+
+                    var fileName = $"messages/{Guid.NewGuid()}.jpg";
+                    var hrefElement = document.CreateElement("a");
+                    hrefElement.SetAttribute("href" , fileName);
+                    mediaFilePaths.Add(fileName);
+                    messageDiv.AppendChild(hrefElement);
+
+                    currentElement.AppendChild(messageDiv);
+                }
+            }
+
+            return (document.DocumentElement.OuterHtml, mediaFilePaths);
         }
     }
 }
