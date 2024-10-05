@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ExportViewer.GUI.Avalonia.MVVM.App"
              xmlns:local="using:ExportViewer.GUI.Avalonia.MVVM"
+             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -10,6 +12,7 @@
     </Application.DataTemplates>
   
     <Application.Styles>
-        <FluentTheme />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime" />
+        <materialIcons:MaterialIconStyles />
     </Application.Styles>
 </Application>
