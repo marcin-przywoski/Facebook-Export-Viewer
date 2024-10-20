@@ -33,22 +33,22 @@ namespace ExportViewer.Core.Services
             {
                 Parallel.ForEach(divs , node =>
                 {
-                    if ((node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent != "") && node.Descendents().OfType<IHtmlAnchorElement>().Any() && (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href") != "")
-                    {
-                        string href = node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href")).GetAttribute("href");
+                    var divImage = node.QuerySelector("img._2yuc._3-96");
+                    var divVideo = node.QuerySelector("video._2yuc._3-96");
+                    var divDate = node.QuerySelector("div._3-94._2lem");
 
+                    if (((divImage != null && divDate != null) || (divVideo != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
+                    {
+                        string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
                         if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
-                            string divDate = node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent;
+                            DateTime parsedDate = Convert.ToDateTime(divDate.TextContent , locale);
 
-                            DateTime date = Convert.ToDateTime(divDate , locale);
-
-                            if (File.Exists(Path.Combine(exportLocation, href)))
+                            if (File.Exists(Path.Combine(exportLocation , href)))
                             {
-                                messages.Add(new Message { Link = href , Date = date });
+                                messages.Add(new Message { Link = href , Date = parsedDate });
                             }
                         }
-
                     }
                 });
 
