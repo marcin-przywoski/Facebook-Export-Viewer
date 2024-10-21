@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -10,6 +11,7 @@ using AngleSharp.Html.Parser;
 
 namespace ExportViewer.Tests.HelperMethods
 {
+    [ExcludeFromCodeCoverage]
     public static class Html
     {
         public static string GenerateLanguageHtml(string xPath)

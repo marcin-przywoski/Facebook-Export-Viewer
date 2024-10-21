@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -9,6 +10,7 @@ using AngleSharp.Html.Parser;
 
 namespace ExportViewer.Tests.HelperMethods
 {
+    [ExcludeFromCodeCoverage]
     public static class Json
     {
         public static string GenerateLanguageJson(string jsonPath)

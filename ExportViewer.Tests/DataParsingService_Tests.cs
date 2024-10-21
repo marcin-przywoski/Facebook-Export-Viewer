@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using ExportViewer.Core.Enums;
@@ -8,6 +9,7 @@ using Xunit.Abstractions;
 
 namespace ExportViewer.Tests
 {
+    [ExcludeFromCodeCoverage]
     public class DataParsingService_Tests
     {
         private readonly DataParsingService _dataParsingService;
