@@ -26,12 +26,14 @@ namespace ExportViewer.Tests
             _output = output;
             _htmlParsingService = new HtmlParsingService();
         }
-
+        //TODO: Fix the method for parsing messages
         [Theory]
-        [InlineData("div.pam._3-95._2pi0._2lej.uiBoxWhite.noborder" , "_3-94._2lem")]
-        public async void HtmlParsingService_ParseMessages (string nodesXPath , string dateXpath)
+        [InlineData("div.pam._3-95._2pi0._2lej.uiBoxWhite.noborder" , "div._3-94._2lem", "div._3-96._2let/img._2yuc._3-96", "", "pl-PL")]
+        [InlineData("div._3-95._a6-g" , "div._3-94._a6-o/div._a72d", "img._a6_o._3-96", "MMM dd, yyyy h:mm:sstt", "pl-PL")]
+/*         [InlineData("div._a6-g" , "div._3-94._a6-o/div._a72d", "img._a6_o._3-96", "MMM dd, yyyy h:mm:sstt", "pl-PL")] */
+        public async void HtmlParsingService_ParseMessages (string nodesXPath , string dateXpath, string mediaXPath, string dateTimeFormat, string locale)
         {
-            (string htmlString, List<string> mediaFilePaths) = HelperMethods.Html.GenerateMessagesHtml(nodesXPath , dateXpath);
+            (string htmlString, List<string> mediaFilePaths) = HelperMethods.Html.GenerateMessagesHtml(nodesXPath , dateXpath, mediaXPath, dateTimeFormat);
 
             string exportPath = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
             string fullPath = Path.Combine(exportPath , "test.html");
@@ -56,11 +58,11 @@ namespace ExportViewer.Tests
 
             File.WriteAllText(fullPath , htmlString);
 
-            var messages = (await _htmlParsingService.GetMessages(fullPath , new CultureInfo("en-US") , exportPath)).ToList();
+            var messages = (await _htmlParsingService.GetMessages(fullPath , new CultureInfo(locale) , exportPath)).ToList();
 
 
             Assert.NotEmpty(messages);
-            //_output.WriteLine($"Export language: {locale.Name} \n Export HTML string: {htmlString}");
+            _output.WriteLine($"Export language: {locale} \n Export HTML string: {htmlString}");
         }
     }
 }
