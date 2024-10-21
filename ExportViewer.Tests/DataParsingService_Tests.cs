@@ -89,11 +89,11 @@ namespace ExportViewer.Tests
         }
 
         [Theory]
-        [InlineData("language_and_locale_v2[0].children[0].entries[0].data.value","preferences/language_and_locale.json")]
-        public async Task GetExportLanguage_Json_ReturnsCultureInfo(string jsonPath, string folderScheme)
+        [InlineData("language_and_locale_v2[0].children[0].entries[0].data.value" , "preferences/language_and_locale.json")]
+        public async Task GetExportLanguage_Json_ReturnsCultureInfo(string jsonPath , string folderScheme)
         {
             string jsonString = HelperMethods.Json.GenerateLanguageJson(jsonPath);
-                        string exportPath = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
+            string exportPath = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
             string fullPath = Path.Combine(exportPath , folderScheme);
             string? dir = Path.GetDirectoryName(fullPath);
 

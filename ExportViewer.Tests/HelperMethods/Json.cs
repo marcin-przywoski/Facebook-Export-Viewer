@@ -11,7 +11,7 @@ namespace ExportViewer.Tests.HelperMethods
 {
     public static class Json
     {
-        public static string GenerateLanguageJson( string jsonPath)
+        public static string GenerateLanguageJson(string jsonPath)
         {
             var pathParts = jsonPath.Split('.')
     .SelectMany(p => p.Split('[').Select(s => s.TrimEnd(']')))
@@ -26,7 +26,7 @@ namespace ExportViewer.Tests.HelperMethods
             });
         }
 
-        private static object BuildJsonObject (List<string> pathParts)
+        private static object BuildJsonObject(List<string> pathParts)
         {
             if (pathParts.Count == 0)
             {
