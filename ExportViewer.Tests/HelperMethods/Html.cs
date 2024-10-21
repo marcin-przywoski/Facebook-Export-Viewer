@@ -119,5 +119,28 @@ namespace ExportViewer.Tests.HelperMethods
 
             return (document.DocumentElement.OuterHtml, mediaFilePaths);
         }
+
+        private static IElement GenerateHtmlElement(string xPath , IHtmlDocument document)
+        {
+            var match = Regex.Match(xPath , @"^(\w+)(?:\.([\w-]+(?:\.[\w-]+)*))?$");
+            if (!match.Success)
+            {
+                return null;
+            }
+
+            string tagName = match.Groups[1].Value;
+            string cssClasses = match.Groups[2].Value;
+
+            var newElement = document.CreateElement(tagName);
+            if (!string.IsNullOrEmpty(cssClasses))
+            {
+                foreach (string cssClass in cssClasses.Split('.'))
+                {
+                    newElement.ClassList.Add(cssClass);
+                }
+            }
+
+            return newElement;
+        }
     }
 }
