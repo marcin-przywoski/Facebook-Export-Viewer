@@ -1,9 +1,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 
 namespace ExportViewer.Tests.HelperMethods
@@ -64,57 +66,75 @@ namespace ExportViewer.Tests.HelperMethods
             return document.DocumentElement.OuterHtml;
         }
 
-        public static (string html, List<string> mediaFilePaths) GenerateMessagesHtml (string nodesXPath , string dateXpath)
+        public static (string html, List<string> mediaFilePaths) GenerateMessagesHtml(string nodesXPath , string dateXpath = "" , string mediaXPath = "" , string dateTimeFormat = "")
         {
             var mediaFilePaths = new List<string>();
             var random = new Random();
             var parser = new HtmlParser();
             var document = parser.ParseDocument("<html><body></body></html>");
-            string[] parts = nodesXPath.Trim('/').Split('/');
-            IElement currentElement = document.Body;
-            foreach (string part in parts)
+            string[] nodesXPathParts = nodesXPath.Trim('/').Split('/');
+            string[] dateXPathParts = dateXpath.Trim('/').Split('/');
+            string[] mediaXPathParts = mediaXPath.Trim('/').Split('/');
+            IElement rootElement = document.Body;
+
+            for (int i = 0; i < random.Next(0 , 8); i++)
             {
-                var match = Regex.Match(part , @"^(\w+)(?:\.([\w-]+(?:\.[\w-]+)*))?$");
-                if (!match.Success)
+                IElement currentElement = rootElement;
+                IElement lastElement = null!;
+                IElement divElement;
+                IElement linkElement = null!;
+                foreach (string part in nodesXPathParts)
                 {
-                    continue;
+                    IElement newElement = GenerateHtmlElement(part , document);
+                    if (newElement != null)
+                    {
+                        currentElement.AppendChild(newElement);
+                        lastElement = newElement;
+                        currentElement = newElement;
+
+                    }
                 }
 
-                string tagName = match.Groups[1].Value;
-                string cssClasses = match.Groups[2].Value;
+                divElement = currentElement;
 
-                for (int i = 0; i < random.Next(0 , 8); i++)
+                // Iterate over the dateXpath parts and create a div for each
+                foreach (string datePart in dateXPathParts)
                 {
-                    var messageDiv = document.CreateElement(tagName);
-
-                    if (!string.IsNullOrEmpty(cssClasses))
+                    IElement dateElement = GenerateHtmlElement(datePart , document);
+                    if (dateElement != null)
                     {
-                        foreach (string cssClass in cssClasses.Split('.'))
-                        {
-                            messageDiv.ClassList.Add(cssClass);
-                        }
+                        currentElement.AppendChild(dateElement);
+                        lastElement = dateElement;
+                        currentElement = dateElement;
                     }
-
-                    var classes = dateXpath.Split('.');
-                    // Create a div element to represent the date and add it to parent div
-                    var dateElement = document.CreateElement("div");
-
-                    foreach (string cssClass in classes)
-                    {
-                        dateElement.ClassList.Add(cssClass);
-                    }
-
-                    dateElement.TextContent = DateTime.Now.ToString("yyyy-MM-dd");
-                    messageDiv.AppendChild(dateElement);
-
-                    var fileName = $"messages/{Guid.NewGuid()}.jpg";
-                    var hrefElement = document.CreateElement("a");
-                    hrefElement.SetAttribute("href" , fileName);
-                    mediaFilePaths.Add(fileName);
-                    messageDiv.AppendChild(hrefElement);
-
-                    currentElement.AppendChild(messageDiv);
                 }
+
+                // Clone the current CultureInfo
+                CultureInfo cultureInfo = CultureInfo.CurrentCulture.Clone() as CultureInfo;
+                if (cultureInfo.Name == "pl-PL")
+                {
+                    cultureInfo.DateTimeFormat.PMDesignator = "po południu";
+                    cultureInfo.DateTimeFormat.AMDesignator = "rano";
+                }
+
+                lastElement.TextContent = DateTime.Now.ToString(dateTimeFormat, cultureInfo);
+
+                var fileName = $"messages/{Guid.NewGuid()}.jpg";
+                mediaFilePaths.Add(fileName);
+                foreach (string mediaPart in mediaXPathParts)
+                {
+                    IElement mediaElement = GenerateHtmlElement(mediaPart , document);
+                    if (mediaElement != null)
+                    {
+                        divElement.AppendChild(mediaElement);
+                        linkElement = mediaElement;
+                        divElement = mediaElement;
+                        //linkElement = mediaElement;
+
+                    }
+                }
+                //linkElement = divElement;
+                linkElement.SetAttribute("src" , fileName);
             }
 
             return (document.DocumentElement.OuterHtml, mediaFilePaths);
