@@ -64,6 +64,26 @@ namespace ExportViewer.Tests
             Assert.Equal(ExportType.HTML , result);
         }
 
+        [Fact]
+        public async Task GetExportType_ReturnsNotApplicable()
+        {
+            // Arrange
+            string tempDir = Path.Combine(Path.GetTempPath() , Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempDir);
+
+            string htmlFilePath = Path.Combine(tempDir , "test.xyz");
+            if (!File.Exists(htmlFilePath))
+            {
+                await File.Create(htmlFilePath).DisposeAsync();
+            }
+
+            // Act
+            ExportType result = await _dataParsingService.GetExportType(tempDir , _progress);
+
+            // Assert
+            Assert.Equal(ExportType.NotApplicable , result);
+        }
+
         [Theory]
         [InlineData("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]" , "about_you/preferences.html")]
         [InlineData("/html/body/div/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]" , "preferences/language_and_locale.html")]
