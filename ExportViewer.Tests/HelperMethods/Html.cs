@@ -66,7 +66,7 @@ namespace ExportViewer.Tests.HelperMethods
             return document.DocumentElement.OuterHtml;
         }
 
-        public static (string html, List<string> mediaFilePaths) GenerateMessagesHtml(string nodesXPath , string dateXpath = "" , string mediaXPath = "" , string dateTimeFormat = "")
+        public static (string html, List<string> mediaFilePaths) GenerateMessagesHtml(string nodesXPath , string dateXpath = "" , string mediaXPath = "" , string dateTimeFormat = "", string locale = "en-US")
         {
             var mediaFilePaths = new List<string>();
             var random = new Random();
@@ -109,15 +109,15 @@ namespace ExportViewer.Tests.HelperMethods
                     }
                 }
 
+                CultureInfo.CurrentCulture = new CultureInfo(locale);
                 // Clone the current CultureInfo
-                CultureInfo cultureInfo = CultureInfo.CurrentCulture.Clone() as CultureInfo;
-                if (cultureInfo.Name == "pl-PL")
+                if (CultureInfo.CurrentCulture.Name == "pl-PL")
                 {
-                    cultureInfo.DateTimeFormat.PMDesignator = "po południu";
-                    cultureInfo.DateTimeFormat.AMDesignator = "rano";
+                    CultureInfo.CurrentCulture.DateTimeFormat.PMDesignator = "po południu";
+                    CultureInfo.CurrentCulture.DateTimeFormat.AMDesignator = "rano";
                 }
 
-                lastElement.TextContent = DateTime.Now.ToString(dateTimeFormat, cultureInfo);
+                lastElement.TextContent = DateTime.Now.ToString(dateTimeFormat, CultureInfo.CurrentCulture);
 
                 var fileName = $"messages/{Guid.NewGuid()}.jpg";
                 mediaFilePaths.Add(fileName);
