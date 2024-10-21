@@ -10,7 +10,7 @@ namespace ExportViewer.Tests.HelperMethods
 {
     public static class Html
     {
-        public static string GenerateLanguageHtml (string xPath)
+        public static string GenerateLanguageHtml(string xPath)
         {
             var parser = new HtmlParser();
             var document = parser.ParseDocument("<html><body></body></html>");
