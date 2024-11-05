@@ -16,22 +16,22 @@ namespace ExportViewer.Core.Services
 {
     public class JsonParsingService : IJsonParsingService
     {
-        public async Task<IEnumerable<Message>> GetMessages(string filePath, CultureInfo locale, string exportLocation)
+        public async Task<IEnumerable<Message>> GetMessages(string filePath , CultureInfo locale , string exportLocation)
         {
             var conversation = JsonSerializer.Deserialize<Conversation>(await File.ReadAllTextAsync(filePath));
 
             conversation.Messages.RemoveAll(s => s.Photos is null && s.Gifs is null && s.Videos is null);
 
             var messages = new List<Message>();
-            foreach ( var message in conversation.Messages )
+            foreach (var message in conversation.Messages)
             {
-                if(message.Gifs != null)
+                if (message.Gifs != null)
                 {
-                    foreach ( var gif in message.Gifs )
+                    foreach (var gif in message.Gifs)
                     {
                         if (File.Exists(exportLocation + gif.Link))
                         {
-                            messages.Add(new Message { Date = message.Date, Link = gif.Link});
+                            messages.Add(new Message { Date = message.Date , Link = gif.Link });
                         }
 
 
@@ -56,7 +56,7 @@ namespace ExportViewer.Core.Services
                     {
                         if (File.Exists(exportLocation + video.Link))
                         {
-                            messages.Add(new Message { Date = message.Date, Link = video.Link });
+                            messages.Add(new Message { Date = message.Date , Link = video.Link });
                         }
                     }
                 }
