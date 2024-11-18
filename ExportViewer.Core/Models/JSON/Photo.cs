@@ -4,9 +4,11 @@ using System.Text;
 using ExportViewer.Core.Models.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ExportViewer.Core.Models.JSON
 {
+    [ExcludeFromCodeCoverage]
     public class Photo : IMessage
     {
         [JsonPropertyName("uri")]

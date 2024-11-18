@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 namespace ExportViewer.Core.Models.JSON
 {
 
+    [ExcludeFromCodeCoverage]
     public class Conversation
     {
         [JsonPropertyName("participants")]
@@ -32,6 +33,7 @@ namespace ExportViewer.Core.Models.JSON
 
     }
 
+    [ExcludeFromCodeCoverage]
     public class MilisecondEpochConverter : JsonConverter<DateTime>
     {
         private static readonly DateTime _epoch = new DateTime(1970 , 1 , 1 , 0 , 0 , 0 , DateTimeKind.Local);

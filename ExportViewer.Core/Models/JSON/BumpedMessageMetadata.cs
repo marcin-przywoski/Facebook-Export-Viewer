@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
 namespace ExportViewer.Core.Models.JSON
 {
+    [ExcludeFromCodeCoverage]
     public class BumpedMessageMetadata
     {
         [JsonPropertyName("bumped_message")]
