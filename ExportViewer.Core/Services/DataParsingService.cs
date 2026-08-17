@@ -176,8 +176,6 @@ namespace ExportViewer.Core.Services
             return null;
         }
 
-
-
         public Task<ExportType> GetExportType (string exportLocation , IProgress<string> progress)
         {
             string jsonSearchPattern = "*.json";
