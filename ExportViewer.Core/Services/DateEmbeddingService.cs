@@ -10,33 +10,43 @@ using ExportViewer.Core.Services.Interfaces;
 namespace ExportViewer.Core.Services
 {
     public class DateEmbeddingService : IDateEmbeddingService
-    {
+     {
         public Task EmbeddDate(Message message, string exportLocation, string destinationPath, IProgress<string> progress)
-        {
+         {
             progress.Report($"Processing {message.Link}");
-            if(File.Exists(exportLocation + message.Link)) 
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath + message.Link));
+            if(File.Exists(exportLocation + message.Link))
+             {
+                 // Embed the sender name into the output file name when available,
+                 // so the user can tell at a glance who sent the message.
+                string destinationLink = BuildDestinationLink(message);
+                string sourceFullPath = exportLocation + message.Link;
+                string destFullPath = destinationPath + destinationLink;
+
+                string? directory = Path.GetDirectoryName(destFullPath);
+                if (!string.IsNullOrEmpty(directory))
+                 {
+                    Directory.CreateDirectory(directory);
+                 }
+
                 try
-                {
-                    File.Copy(exportLocation + message.Link, destinationPath + message.Link);
-                }
+                 {
+                    File.Copy(sourceFullPath, destFullPath, overwrite: true);
+                 }
                 catch (Exception ex)
-                {
+                 {
+                    Console.WriteLine($"Error copying {message.Link}: {ex.Message}");
+                 }
 
-                } 
+                File.SetCreationTime(destFullPath, message.Date);
+                File.SetLastAccessTime(destFullPath, message.Date);
+                File.SetLastWriteTime(destFullPath, message.Date);
 
-
-                    File.SetCreationTime(destinationPath + message.Link, message.Date);
-                    File.SetLastAccessTime(destinationPath + message.Link, message.Date);
-                    File.SetLastWriteTime(destinationPath + message.Link, message.Date);
-
-                    return Task.CompletedTask;
-
-
-            }
+                return Task.CompletedTask;
+             }
 
             return Task.CompletedTask;
+         }
+
          // Builds the destination relative path, inserting a sanitized sender name
          // before the file extension. Group messages ("Uczestnicy: ...") are treated
          // as a single generic "grupa" label to keep the file name short and clean.
@@ -120,3 +130,5 @@ namespace ExportViewer.Core.Services
 
             return result;
             }
+        }
+    }
