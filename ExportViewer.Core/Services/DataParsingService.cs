@@ -108,6 +108,24 @@ namespace ExportViewer.Core.Services
 
             if (exportType == ExportType.HTML)
             {
+                // New Facebook export format: preferences/preferences/preferred_language.html
+                // The locale token (e.g. pl_PL) is embedded in the body text.
+                var newLanguageFile = Path.Combine(exportLocation, "preferences", "preferences", "preferred_language.html");
+                if (File.Exists(newLanguageFile))
+                {
+                    string prefs = await File.ReadAllTextAsync(newLanguageFile);
+                    var doc = parser.ParseDocument(prefs);
+                    var bodyText = doc.Body?.TextContent ?? string.Empty;
+                    var match = Regex.Match(bodyText, @"\b([a-z]{2})_([A-Z]{2})\b");
+                    if (match.Success)
+                    {
+                        locale = match.Value;
+                        progress.Report($"Export language: {locale}");
+                        return new CultureInfo(locale, false);
+                    }
+                }
+
+                // Legacy export format: about_you/preferences.html
                 preferencesLocation = Path.Combine(exportLocation , "about_you/preferences.html");
                 if (File.Exists(preferencesLocation))
                 {
@@ -120,11 +138,8 @@ namespace ExportViewer.Core.Services
                         return new CultureInfo(locale , false);
                     }
                 }
-                else
-                {
-                    return CultureInfo.CurrentCulture;
-                }
 
+                // Legacy export format: preferences/language_and_locale.html
                 preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.html");
                 if (File.Exists(preferencesLocation))
                 {
@@ -137,10 +152,8 @@ namespace ExportViewer.Core.Services
                         return new CultureInfo(locale , false);
                     }
                 }
-                else
-                {
-                    return CultureInfo.CurrentCulture;
-                }
+
+                return CultureInfo.CurrentCulture;
             }
             else if (exportType == ExportType.Json)
             {
