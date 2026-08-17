@@ -115,7 +115,7 @@ namespace ExportViewer.Core.Services
                 if (File.Exists(newLanguageFile))
                 {
                     string prefs = await File.ReadAllTextAsync(newLanguageFile);
-                    var doc = parser.ParseDocument(prefs);
+                    var doc = await parser.ParseDocumentAsync(prefs);
                     var bodyText = doc.Body?.TextContent ?? string.Empty;
                     var match = Regex.Match(bodyText, @"\b([a-z]{2})_([A-Z]{2})\b");
                     if (match.Success)
@@ -131,7 +131,7 @@ namespace ExportViewer.Core.Services
                 if (File.Exists(preferencesLocation))
                 {
                     string preferences = await File.ReadAllTextAsync(preferencesLocation);
-                    var document = parser.ParseDocument(preferences);
+                    var document = await parser.ParseDocumentAsync(preferences);
                     locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]")?.TextContent?.Trim();
                     if (locale != null)
                     {
