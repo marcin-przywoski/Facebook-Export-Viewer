@@ -37,6 +37,57 @@ namespace ExportViewer.Core.Services
             }
 
             return Task.CompletedTask;
+         // Builds the destination relative path, inserting a sanitized sender name
+         // before the file extension. Group messages ("Uczestnicy: ...") are treated
+         // as a single generic "grupa" label to keep the file name short and clean.
+        private static string BuildDestinationLink(Message message)
+         {
+            string sender = message.Sender?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(sender))
+             {
+                return message.Link;
+             }
+
+             // Group conversations use an "Uczestnicy:" header listing all participants;
+             // collapse that to a single short label so the file name stays readable.
+            if (sender.StartsWith("Uczestnicy:", StringComparison.OrdinalIgnoreCase))
+             {
+                sender = "grupa";
+             }
+
+            string sanitized = SanitizeFileName(sender);
+            if (string.IsNullOrEmpty(sanitized))
+             {
+                return message.Link;
+             }
+
+              // Split the link into directory and file name using the last path separator.
+            string link = message.Link;
+            int lastSlash = Math.Max(link.LastIndexOf('/'), link.LastIndexOf('\\'));
+            string dir = lastSlash >= 0 ? link.Substring(0, lastSlash) : string.Empty;
+            string fileName = lastSlash >= 0 ? link.Substring(lastSlash + 1) : link;
+
+              // Split the file name into base name and extension using the last dot.
+            string baseName = fileName;
+            string extension = string.Empty;
+            int lastDot = fileName.LastIndexOf('.');
+            if (lastDot > 0)
+              {
+                baseName = fileName.Substring(0, lastDot);
+                extension = fileName.Substring(lastDot);
+              }
+
+              // Insert the sender name before the base name: "sender baseName.ext".
+            string newFileName = $"{sanitized} {baseName}{extension}";
+            if (string.IsNullOrEmpty(dir))
+              {
+                return newFileName;
+              }
+
+              // Preserve the original separator style.
+            string sep = link.Contains('/') ? "/" : "\\";
+            return dir + sep + newFileName;
+           }
            // Removes characters that are illegal in file names and collapses whitespace.
          private static string SanitizeFileName(string name)
            {
