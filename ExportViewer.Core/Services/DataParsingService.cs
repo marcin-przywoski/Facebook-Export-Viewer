@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using AngleSharp.Html.Parser;
@@ -94,7 +95,27 @@ namespace ExportViewer.Core.Services
                     Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
                 }
             }
-
+            // New Facebook export format stores all messages under your_facebook_activity/messages/
+            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/" })
+             {
+                var subDirectoryLocation = Path.Combine(exportLocation , "your_facebook_activity" , "messages" , subDirectory);
+                var fileExtension = fileExtensions[type];
+                if (Directory.Exists(subDirectoryLocation))
+                 {
+                    try
+                     {
+                        exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation , fileExtensions[type] , SearchOption.AllDirectories));
+                     }
+                    catch (Exception ex)
+                     {
+                        Console.WriteLine($"Error getting files from {subDirectoryLocation}: {ex.Message}");
+                     }
+                 }
+                else
+                 {
+                    Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
+                 }
+             }
             return Task.FromResult<IEnumerable<string>>(exportFiles);
         }
 
@@ -108,11 +129,29 @@ namespace ExportViewer.Core.Services
 
             if (exportType == ExportType.HTML)
             {
+                // New Facebook export format: preferences/preferences/preferred_language.html
+                // The locale token (e.g. pl_PL) is embedded in the body text.
+                var newLanguageFile = Path.Combine(exportLocation, "preferences", "preferences", "preferred_language.html");
+                if (File.Exists(newLanguageFile))
+                {
+                    string prefs = await File.ReadAllTextAsync(newLanguageFile);
+                    var doc = await parser.ParseDocumentAsync(prefs);
+                    var bodyText = doc.Body?.TextContent ?? string.Empty;
+                    var match = Regex.Match(bodyText, @"\b([a-z]{2})_([A-Z]{2})\b");
+                    if (match.Success)
+                    {
+                        locale = match.Value;
+                        progress.Report($"Export language: {locale}");
+                        return new CultureInfo(locale, false);
+                    }
+                }
+
+                // Legacy export format: about_you/preferences.html
                 preferencesLocation = Path.Combine(exportLocation , "about_you/preferences.html");
                 if (File.Exists(preferencesLocation))
                 {
                     string preferences = await File.ReadAllTextAsync(preferencesLocation);
-                    var document = parser.ParseDocument(preferences);
+                    var document = await parser.ParseDocumentAsync(preferences);
                     locale = document.Body.SelectSingleNode("/html/body/div/div/div/div[2]/div[2]/div/div[3]/div/div[2]/div[1]/div[2]/div/div/div/div[1]/div[3]")?.TextContent?.Trim();
                     if (locale != null)
                     {
@@ -120,11 +159,8 @@ namespace ExportViewer.Core.Services
                         return new CultureInfo(locale , false);
                     }
                 }
-                else
-                {
-                    return CultureInfo.CurrentCulture;
-                }
 
+                // Legacy export format: preferences/language_and_locale.html
                 preferencesLocation = Path.Combine(exportLocation , "preferences/language_and_locale.html");
                 if (File.Exists(preferencesLocation))
                 {
@@ -137,10 +173,8 @@ namespace ExportViewer.Core.Services
                         return new CultureInfo(locale , false);
                     }
                 }
-                else
-                {
-                    return CultureInfo.CurrentCulture;
-                }
+
+                return CultureInfo.CurrentCulture;
             }
             else if (exportType == ExportType.Json)
             {
@@ -150,8 +184,6 @@ namespace ExportViewer.Core.Services
                     string json = await File.ReadAllTextAsync(preferencesLocation);
                     JsonDocument jsonDocument = JsonDocument.Parse(json);
                     locale = jsonDocument.RootElement.GetProperty("language_and_locale_v2[0].children[0].entries[0].data.value").GetString();
-/*                     JObject jsonObj = JObject.Parse(json);
-                    locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value"); */
                     if (locale != null)
                     {
                         progress.Report($"Export language: {locale}");
@@ -162,8 +194,6 @@ namespace ExportViewer.Core.Services
 
             return null;
         }
-
-
 
         public Task<ExportType> GetExportType (string exportLocation , IProgress<string> progress)
         {
