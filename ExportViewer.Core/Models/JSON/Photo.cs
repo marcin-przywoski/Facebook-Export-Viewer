@@ -15,5 +15,8 @@ namespace ExportViewer.Core.Models.JSON
         [JsonConverter(typeof(MilisecondEpochConverter))]
         [JsonPropertyName("creation_timestamp")]
         public DateTime Date { get; set; }
+
+        public string Sender { get; set; } = string.Empty;
+
     }
 }

@@ -2,6 +2,7 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
+      - release
   categories:
     - title: New Features 🎉
       labels:

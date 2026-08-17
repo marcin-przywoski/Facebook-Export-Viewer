@@ -24,6 +24,21 @@ namespace ExportViewer.Core.Services
         {
             ConcurrentBag<Message> messages = new ConcurrentBag<Message>();
 
+            var effectiveLocale = (CultureInfo)locale.Clone();
+            if (effectiveLocale.DisplayName == "pl_PL" || effectiveLocale.Name.StartsWith("pl", StringComparison.OrdinalIgnoreCase))
+            {
+                effectiveLocale.DateTimeFormat.PMDesignator = "po południu";
+                effectiveLocale.DateTimeFormat.AMDesignator = "rano";
+            }
+
+            string[] dateFormats = new[]
+            {
+                "MMM dd, yyyy h:mm:ss tt",
+                "MMM d, yyyy h:mm:ss tt",
+                "MMM dd, yyyy h:mm:sstt",
+                "MMM d, yyyy h:mm:sstt"
+            };
+
             string source = await File.ReadAllTextAsync(filePath);
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(source);
@@ -33,22 +48,22 @@ namespace ExportViewer.Core.Services
             {
                 Parallel.ForEach(divs , node =>
                 {
-                    if ((node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent != "") && node.Descendents().OfType<IHtmlAnchorElement>().Any() && (node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href"))).GetAttribute("href") != "")
-                    {
-                        string href = node.Descendents().OfType<IHtmlAnchorElement>().First(x => x.HasAttribute("href")).GetAttribute("href");
+                    var divImage = node.QuerySelector("img._2yuc._3-96");
+                    var divVideo = node.QuerySelector("video._2yuc._3-96");
+                    var divDate = node.QuerySelector("div._3-94._2lem");
 
+                    if (((divImage != null && divDate != null) || (divVideo != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
+                    {
+                        string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
                         if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
-                            string divDate = node.Descendents().OfType<IHtmlDivElement>().First(x => x.ClassList.Contains("_3-94") && x.ClassList.Contains("_2lem")).TextContent;
+                            DateTime parsedDate = Convert.ToDateTime(divDate.TextContent , effectiveLocale);
 
-                            DateTime date = Convert.ToDateTime(divDate , locale);
-
-                            if (File.Exists(exportLocation + href))
+                            if (File.Exists(Path.Combine(exportLocation , href)))
                             {
-                                messages.Add(new Message { Link = href , Date = date });
+                                messages.Add(new Message { Link = href , Date = parsedDate });
                             }
                         }
-
                     }
                 });
 
@@ -56,12 +71,6 @@ namespace ExportViewer.Core.Services
             else if (document.QuerySelectorAll("div._3-95._a6-g").Any())
             {
                 divs = document.QuerySelectorAll("div._3-95._a6-g");
-
-                if (locale.DisplayName == "pl_PL")
-                {
-                    locale.DateTimeFormat.PMDesignator = "po południu";
-                    locale.DateTimeFormat.AMDesignator = "rano";
-                }
 
                 Parallel.ForEach(divs , node =>
                 {
@@ -75,13 +84,9 @@ namespace ExportViewer.Core.Services
                         string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
                         if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
+                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , dateFormats , effectiveLocale , DateTimeStyles.None);
 
-                            locale.DateTimeFormat.PMDesignator = "po południu";
-                            locale.DateTimeFormat.AMDesignator = "rano";
-
-                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
-
-                            if (File.Exists(exportLocation + href))
+                            if (File.Exists(Path.Combine(exportLocation , href)))
                             {
                                 messages.Add(new Message { Link = href , Date = parsedDate });
                             }
@@ -91,87 +96,55 @@ namespace ExportViewer.Core.Services
                 });
 
             }
-            else if (document.QuerySelectorAll("div._a6-g").Any())
+            else if (document.QuerySelectorAll("._a6-g").Any())
             {
-                divs = document.QuerySelectorAll("div._a6-g");
-
-                if (locale.DisplayName == "pl_PL")
-                {
-                    locale.DateTimeFormat.PMDesignator = "po południu";
-                    locale.DateTimeFormat.AMDesignator = "rano";
-                }
+                divs = document.QuerySelectorAll("._a6-g");
 
                 Parallel.ForEach(divs , node =>
-                {
+                 {
 
-                    var divImages = node.QuerySelectorAll("img._a6_o._3-96");
-                    var divVideos = node.QuerySelectorAll("video._a6_o._3-96");
-                    var divDate = node.QuerySelector("div._3-94._a6-o")?.QuerySelector("div._a72d");
+                     var divImages = node.QuerySelectorAll("img._a6_o._3-96");
+                     var divVideos = node.QuerySelectorAll("video._a6_o._3-96");
+                     // Date is in <footer class="_3-94 _a6-o"><div class="_a72d">...</div></footer>
+                     // in the new export format, so use tag-agnostic selectors.
+                     var divDate = node.QuerySelector("._3-94._a6-o")?.QuerySelector("._a72d");
 
-                    if (((divImages != null && divDate != null) || (divVideos != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
-                    {
-                        Parallel.ForEach(divImages , divImage =>
-                        {
-                            string href = divImage.GetAttribute("src");
-                            if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif")))
-                            {
-                                if (Thread.CurrentThread.CurrentCulture.IsReadOnly || locale.IsReadOnly)
-                                {
-                                    var clone = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
-                                    clone.DateTimeFormat.PMDesignator = "po południu";
-                                    clone.DateTimeFormat.AMDesignator = "rano";
-                                    Thread.CurrentThread.CurrentCulture = clone;
-                                    Thread.CurrentThread.CurrentUICulture = clone;
-                                    locale = clone;
-                                }
-                                else
-                                {
-                                    locale.DateTimeFormat.PMDesignator = "po południu";
-                                    locale.DateTimeFormat.AMDesignator = "rano";
-                                }
+                     // Extract sender name from <h2 class="_2ph_ _a6-h"> or <h2 class="_2ph_ _a6-h _a6-i">
+                     var senderElement = node.QuerySelector("h2._a6-h._a6-i") ?? node.QuerySelector("h2._a6-h");
+                     string sender = senderElement?.TextContent?.Trim() ?? string.Empty;
 
+                     if (((divImages != null && divDate != null) || (divVideos != null && divDate != null)) && !string.IsNullOrEmpty(divDate.TextContent))
+                     {
+                         Parallel.ForEach(divImages , divImage =>
+                          {
+                              string href = divImage.GetAttribute("src");
+                              if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif")))
+                              {
+                                  DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , dateFormats , effectiveLocale , DateTimeStyles.None);
 
-                                DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
+                                  if (File.Exists(Path.Combine(exportLocation , href)))
+                                  {
+                                      messages.Add(new Message { Link = href , Date = parsedDate , Sender = sender });
+                                  }
+                              }
+                          });
 
-                                if (File.Exists(exportLocation + href))
-                                {
-                                    messages.Add(new Message { Link = href , Date = parsedDate });
-                                }
-                            }
-                        });
+                         Parallel.ForEach(divVideos , divVideo =>
+                          {
+                              string href = divVideo.GetAttribute("src");
+                              if ((!href.StartsWith("http") || !href.StartsWith("https")) && href.EndsWith(".mp4"))
+                              {
+                                  DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , dateFormats , effectiveLocale , DateTimeStyles.None);
 
-                        Parallel.ForEach(divVideos , divVideo =>
-                        {
-                            string href = divVideo.GetAttribute("src");
-                            if ((!href.StartsWith("http") || !href.StartsWith("https")) && href.EndsWith(".mp4"))
-                            {
-                                if (Thread.CurrentThread.CurrentCulture.IsReadOnly || locale.IsReadOnly)
-                                {
-                                    var clone = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
-                                    clone.DateTimeFormat.PMDesignator = "po południu";
-                                    clone.DateTimeFormat.AMDesignator = "rano";
-                                    Thread.CurrentThread.CurrentCulture = clone;
-                                    Thread.CurrentThread.CurrentUICulture = clone;
-                                    locale = clone;
-                                }
-                                else
-                                {
-                                    locale.DateTimeFormat.PMDesignator = "po południu";
-                                    locale.DateTimeFormat.AMDesignator = "rano";
-                                }
+                                  if (File.Exists(Path.Combine(exportLocation , href)))
+                                  {
+                                      messages.Add(new Message { Link = href , Date = parsedDate , Sender = sender });
+                                  }
+                              }
+                          });
+                     }
 
-
-                                DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
-
-                                if (File.Exists(exportLocation + href))
-                                {
-                                    messages.Add(new Message { Link = href , Date = parsedDate });
-                                }
-                            }
-                        });
-                    }
-
-                });
+                 });
             }
 
             return messages.AsEnumerable();
