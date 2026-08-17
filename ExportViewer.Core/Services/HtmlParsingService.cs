@@ -24,6 +24,21 @@ namespace ExportViewer.Core.Services
         {
             ConcurrentBag<Message> messages = new ConcurrentBag<Message>();
 
+            var effectiveLocale = (CultureInfo)locale.Clone();
+            if (effectiveLocale.DisplayName == "pl_PL" || effectiveLocale.Name.StartsWith("pl", StringComparison.OrdinalIgnoreCase))
+            {
+                effectiveLocale.DateTimeFormat.PMDesignator = "po południu";
+                effectiveLocale.DateTimeFormat.AMDesignator = "rano";
+            }
+
+            string[] dateFormats = new[]
+            {
+                "MMM dd, yyyy h:mm:ss tt",
+                "MMM d, yyyy h:mm:ss tt",
+                "MMM dd, yyyy h:mm:sstt",
+                "MMM d, yyyy h:mm:sstt"
+            };
+
             string source = await File.ReadAllTextAsync(filePath);
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(source);
@@ -42,7 +57,7 @@ namespace ExportViewer.Core.Services
                         string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
                         if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
-                            DateTime parsedDate = Convert.ToDateTime(divDate.TextContent , locale);
+                            DateTime parsedDate = Convert.ToDateTime(divDate.TextContent , effectiveLocale);
 
                             if (File.Exists(Path.Combine(exportLocation , href)))
                             {
@@ -57,12 +72,6 @@ namespace ExportViewer.Core.Services
             {
                 divs = document.QuerySelectorAll("div._3-95._a6-g");
 
-                if (locale.DisplayName == "pl_PL")
-                {
-                    locale.DateTimeFormat.PMDesignator = "po południu";
-                    locale.DateTimeFormat.AMDesignator = "rano";
-                }
-
                 Parallel.ForEach(divs , node =>
                 {
 
@@ -75,11 +84,7 @@ namespace ExportViewer.Core.Services
                         string href = divImage != null ? divImage.GetAttribute("src") : divVideo.GetAttribute("src");
                         if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif") || href.EndsWith(".mp4")))
                         {
-
-                            locale.DateTimeFormat.PMDesignator = "po południu";
-                            locale.DateTimeFormat.AMDesignator = "rano";
-
-                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , locale);
+                            DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , dateFormats , effectiveLocale , DateTimeStyles.None);
 
                             if (File.Exists(Path.Combine(exportLocation , href)))
                             {
@@ -94,12 +99,6 @@ namespace ExportViewer.Core.Services
             else if (document.QuerySelectorAll("._a6-g").Any())
             {
                 divs = document.QuerySelectorAll("._a6-g");
-
-                if (locale.DisplayName == "pl_PL" || locale.Name.StartsWith("pl"))
-                {
-                    locale.DateTimeFormat.PMDesignator = "po południu";
-                    locale.DateTimeFormat.AMDesignator = "rano";
-                }
 
                 Parallel.ForEach(divs , node =>
                  {
@@ -121,23 +120,7 @@ namespace ExportViewer.Core.Services
                               string href = divImage.GetAttribute("src");
                               if ((!href.StartsWith("http") || !href.StartsWith("https")) && (href.EndsWith(".jpg") || href.EndsWith(".png") || href.EndsWith(".gif")))
                               {
-                                  var effectiveLocale = locale;
-                                  if (Thread.CurrentThread.CurrentCulture.IsReadOnly || effectiveLocale.IsReadOnly)
-                                  {
-                                      var clone = (Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo)!;
-                                      clone.DateTimeFormat.PMDesignator = "po południu";
-                                      clone.DateTimeFormat.AMDesignator = "rano";
-                                      Thread.CurrentThread.CurrentCulture = clone;
-                                      Thread.CurrentThread.CurrentUICulture = clone;
-                                      effectiveLocale = clone;
-                                  }
-                                  else
-                                  {
-                                      effectiveLocale.DateTimeFormat.PMDesignator = "po południu";
-                                      effectiveLocale.DateTimeFormat.AMDesignator = "rano";
-                                  }
-
-                                  DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , effectiveLocale);
+                                  DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , dateFormats , effectiveLocale , DateTimeStyles.None);
 
                                   if (File.Exists(Path.Combine(exportLocation , href)))
                                   {
@@ -151,23 +134,7 @@ namespace ExportViewer.Core.Services
                               string href = divVideo.GetAttribute("src");
                               if ((!href.StartsWith("http") || !href.StartsWith("https")) && href.EndsWith(".mp4"))
                               {
-                                  var effectiveLocale = locale;
-                                  if (Thread.CurrentThread.CurrentCulture.IsReadOnly || effectiveLocale.IsReadOnly)
-                                  {
-                                      var clone = (Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo)!;
-                                      clone.DateTimeFormat.PMDesignator = "po południu";
-                                      clone.DateTimeFormat.AMDesignator = "rano";
-                                      Thread.CurrentThread.CurrentCulture = clone;
-                                      Thread.CurrentThread.CurrentUICulture = clone;
-                                      effectiveLocale = clone;
-                                  }
-                                  else
-                                  {
-                                      effectiveLocale.DateTimeFormat.PMDesignator = "po południu";
-                                      effectiveLocale.DateTimeFormat.AMDesignator = "rano";
-                                  }
-
-                                  DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , "MMM dd, yyyy h:mm:sstt" , effectiveLocale);
+                                  DateTime parsedDate = DateTime.ParseExact(divDate.TextContent , dateFormats , effectiveLocale , DateTimeStyles.None);
 
                                   if (File.Exists(Path.Combine(exportLocation , href)))
                                   {
