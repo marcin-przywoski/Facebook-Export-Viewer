@@ -12,5 +12,7 @@ namespace ExportViewer.Core.Models.JSON
         public string Link { get; set; }
         public DateTime Date { get; set; }
 
+        public string Sender { get; set; } = string.Empty;
+
     }
 }
