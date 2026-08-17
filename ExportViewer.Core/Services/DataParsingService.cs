@@ -163,8 +163,6 @@ namespace ExportViewer.Core.Services
                     string json = await File.ReadAllTextAsync(preferencesLocation);
                     JsonDocument jsonDocument = JsonDocument.Parse(json);
                     locale = jsonDocument.RootElement.GetProperty("language_and_locale_v2[0].children[0].entries[0].data.value").GetString();
-/*                     JObject jsonObj = JObject.Parse(json);
-                    locale = (string)jsonObj.SelectToken("language_and_locale_v2[0].children[0].entries[0].data.value"); */
                     if (locale != null)
                     {
                         progress.Report($"Export language: {locale}");
