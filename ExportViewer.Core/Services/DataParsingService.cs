@@ -95,7 +95,27 @@ namespace ExportViewer.Core.Services
                     Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
                 }
             }
-
+            // New Facebook export format stores all messages under your_facebook_activity/messages/
+            foreach (var subDirectory in new[] { "archived_threads/" , "filtered_threads/" , "inbox/" })
+             {
+                var subDirectoryLocation = Path.Combine(exportLocation , "your_facebook_activity" , "messages" , subDirectory);
+                var fileExtension = fileExtensions[type];
+                if (Directory.Exists(subDirectoryLocation))
+                 {
+                    try
+                     {
+                        exportFiles.AddRange(Directory.GetFiles(subDirectoryLocation , fileExtensions[type] , SearchOption.AllDirectories));
+                     }
+                    catch (Exception ex)
+                     {
+                        Console.WriteLine($"Error getting files from {subDirectoryLocation}: {ex.Message}");
+                     }
+                 }
+                else
+                 {
+                    Console.WriteLine($"Directory {subDirectoryLocation} does not exist.");
+                 }
+             }
             return Task.FromResult<IEnumerable<string>>(exportFiles);
         }
 
