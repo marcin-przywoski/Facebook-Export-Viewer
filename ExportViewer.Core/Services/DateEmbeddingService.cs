@@ -88,6 +88,7 @@ namespace ExportViewer.Core.Services
             string sep = link.Contains('/') ? "/" : "\\";
             return dir + sep + newFileName;
            }
+
            // Removes characters that are illegal in file names and collapses whitespace.
          private static string SanitizeFileName(string name)
            {
